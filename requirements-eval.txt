@@ -1,0 +1,14 @@
+# Extra dependencies for the privacy-metrics evaluation experiments
+# (Anonymeter, synthcity, Privacy Meter). These are NOT required to
+# generate reconstructable tables (see requirements.txt for those); they
+# are only needed to reproduce the §6.3 privacy-metrics results.
+#
+# Install with:  pip install -r requirements-eval.txt
+#
+# Note: synthcity pulls in a substantial PyTorch/XGBoost stack — expect
+# a several-hundred-MB download.
+
+anonymeter
+synthcity
+scikit-learn
+pandas

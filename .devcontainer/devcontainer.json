@@ -1,17 +1,17 @@
 {
-  "name": "Attack SMT",
+  "name": "generator-reconstruction-attacks",
   "build": {
     "context": "..",
-    "dockerfile": "Dockerfile"
+    "dockerfile": "../Dockerfile"
   },
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  "postCreateCommand": "python3 --version && glpsol --version | head -1 && python3 -c 'import pulp, cvxpy, sympy, numpy, scipy; print(\"tool deps OK\")' && python3 -c 'import anonymeter, synthcity, sklearn, pandas; print(\"eval deps OK\")' && echo && echo 'Devcontainer ready. Try:  bash scripts/reproduce_generation.sh'",
   "customizations": {
     "vscode": {
       "extensions": [
         "ms-python.python",
         "ms-python.black-formatter",
-        "ms-azuretools.vscode-docker",
-        "GitHub.copilot",
-        "mathematic.vscode-latex"
+        "ms-azuretools.vscode-docker"
       ]
     }
   }

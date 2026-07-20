@@ -20,29 +20,28 @@ risk concrete on data an organisation can recognise as its own.
   drawn from three industry standards (CDISC SDTM/ADaM, HR Open, SDMX).
 - `examples/` — sample fully- and partially-reconstructable datasets.
 
-## Requirements
+## Getting started
 
-The tool relies on the GLPK linear-programming solver:
+The recommended path is to open the project in VS Code and let it
+build the supplied [`.devcontainer/`](.devcontainer/) — you get a Python
+3.12 environment with GLPK, all tool dependencies, and all
+privacy-metrics dependencies installed. See _Reproducing the paper
+results_ below.
+
+If you prefer a manual install:
 
 ```bash
-apt install glpk-utils
+apt install glpk-utils                       # LP/MIP solver
+pip install -r requirements.txt              # tool dependencies
+pip install -r requirements-eval.txt         # privacy-metrics deps (optional)
 ```
 
-Python dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-Alternatively, use the provided [Dockerfile](Dockerfile):
+Or build the Docker image directly:
 
 ```bash
 chmod +x setup.sh
 ./setup.sh
 ```
-
-or open the project in VS Code with the supplied
-[`.devcontainer/`](.devcontainer/) configuration.
 
 ## Usage
 
@@ -117,26 +116,57 @@ python main.py --number-of-records 16 --seed 42 \
 
 ## Reproducing the paper results
 
-The [`experiments/`](experiments/) directory contains everything needed
-to reproduce the results reported in the paper.
+Two top-level scripts in [`scripts/`](scripts/) reproduce the paper's
+results and print a clear success/failure summary. The easiest path is
+to open the project in VS Code with the supplied
+[`.devcontainer/`](.devcontainer/) — VS Code will build the container,
+install everything, and drop you into a shell where the scripts are
+ready to run.
+
+### Table generation (~1–5 min)
 
 ```bash
-cd experiments
-./run_all.sh
+bash scripts/reproduce_generation.sh
 ```
 
-Per-experiment READMEs describe individual scenarios (SDTM VS,
-ADaM ADSL/ADLB/ADPC, HR Open, SDMX / Eurostat SILC). Result CSVs and
-Markdown tables are checked in; scripts overwrite them on re-run.
+Runs the tool on nine schemas drawn from three industry standards
+(CDISC SDTM/ADaM, HR Open, SDMX / Eurostat SILC). Every schema should
+end with `reconstructed : EXACT`. Per-run logs land under `logs/`.
 
-Additional runners are available:
+### Privacy-metrics evaluation (~1 hour)
 
-- `run_privacy_metrics_all.sh` — evaluate Anonymeter, Synthcity, and
-  Privacy Meter against generated datasets.
-- `run_anonymeter_all.sh` — Anonymeter-only sweep.
-- `run_decoys_all.sh` — partially-reconstructable variants with decoy
-  embedding.
-- `benchmark.sh` — timing / scaling benchmark (Sylvester vs. MIP).
+```bash
+bash scripts/reproduce_privacy_metrics.sh
+```
+
+For each schema, generates the decoy-augmented dataset (10 %
+reconstructable core + 90 % decoys) and evaluates it with three
+state-of-the-art privacy metrics: **Anonymeter**, **synthcity**
+(`DataLeakageXGB`, `IdentifiabilityScore`), and a **Privacy-Meter**-style
+Random-Forest attribute-inference attack. Every metric should report
+near-zero risk despite the fact that our tool can reconstruct the
+sensitive column exactly. Aggregate results land in
+`experiments/anonymeter_results.md` and
+`experiments/privacy_metrics_results.md`.
+
+### Comparing against checked-in results
+
+Both scripts overwrite the outputs under `experiments/*/output` and
+`experiments/*/output_decoys`. To check that your re-run matches the
+committed reference:
+
+```bash
+git diff experiments/
+```
+
+### Individual runners
+
+The `experiments/` directory also exposes finer-grained scripts if you
+want to run one piece at a time: `experiments/<NN_name>/run.sh`,
+`experiments/run_all.sh`, `experiments/run_decoys_all.sh`,
+`experiments/run_anonymeter_all.sh`,
+`experiments/run_privacy_metrics_all.sh`, `experiments/benchmark.sh`
+(Sylvester-vs-MIP scaling sweep).
 
 ## License
 
