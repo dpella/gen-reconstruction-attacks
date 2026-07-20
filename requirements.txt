@@ -13,7 +13,7 @@ osqp==1.0.4
 PuLP==3.1.1
 pyright==1.1.401
 python-dateutil==2.9.0.post0
-scipy==1.15.3
+scipy>=1.10,<1.14  # capped at <1.14 for synthcity compatibility (trapz removal in 1.14)
 scs==3.2.7.post2
 setuptools==80.8.0
 six==1.17.0
