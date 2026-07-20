@@ -135,6 +135,16 @@ end with `reconstructed : EXACT`. Per-run logs land under `logs/`.
 
 ### Privacy-metrics evaluation (~1 hour)
 
+The privacy-metrics stack (Anonymeter, synthcity, PyTorch, XGBoost) is
+heavy, so it is **not** installed in the base devcontainer. Install it
+once with:
+
+```bash
+bash scripts/install_eval_deps.sh      # ~5-15 min, one-time
+```
+
+Then run the evaluation:
+
 ```bash
 bash scripts/reproduce_privacy_metrics.sh
 ```

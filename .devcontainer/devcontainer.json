@@ -5,7 +5,7 @@
     "dockerfile": "../Dockerfile"
   },
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
-  "postCreateCommand": "python3 --version && glpsol --version | head -1 && python3 -c 'import pulp, cvxpy, sympy, numpy, scipy; print(\"tool deps OK\")' && python3 -c 'import anonymeter, synthcity, sklearn, pandas; print(\"eval deps OK\")' && echo && echo 'Devcontainer ready. Try:  bash scripts/reproduce_generation.sh'",
+  "postCreateCommand": "bash -lc 'echo && echo \"Devcontainer ready.\" && echo \"  1) bash scripts/reproduce_generation.sh          (~1-5 min)\" && echo \"  2) bash scripts/install_eval_deps.sh              (one-time; ~5-15 min)\" && echo \"  3) bash scripts/reproduce_privacy_metrics.sh      (~1 hour)\" && echo'",
   "customizations": {
     "vscode": {
       "extensions": [

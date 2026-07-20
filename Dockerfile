@@ -2,8 +2,8 @@ FROM python:3.12.3
 
 WORKDIR /workspace
 
-# System dependencies (GLPK for the MIP solver, plus common build tools
-# needed by some pip wheels).
+# System dependencies: GLPK for the MIP solver, plus common build tools
+# some pip wheels need.
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
        ca-certificates \
@@ -16,15 +16,15 @@ RUN apt-get update \
 
 RUN pip install --upgrade pip
 
-# Copy just the requirements first for better Docker layer caching.
-COPY requirements.txt requirements-eval.txt ./
+# Install only the tool dependencies at build time. The heavier
+# privacy-metrics dependencies (anonymeter, synthcity, PyTorch, ...)
+# live in requirements-eval.txt and are installed on demand via
+# scripts/install_eval_deps.sh — see the README.
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Install the tool dependencies (small) and the evaluation dependencies
-# (larger — pulls in torch, synthcity, sklearn, pandas).
-RUN pip install --no-cache-dir -r requirements.txt \
-    && pip install --no-cache-dir -r requirements-eval.txt
-
-# Copy the source tree.
+# Copy the source tree (harmless in the devcontainer, where the
+# workspace is bind-mounted over this at runtime).
 COPY . .
 
 CMD ["bash"]

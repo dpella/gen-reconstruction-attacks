@@ -62,7 +62,11 @@ else
 fi
 if ! python3 -c "import anonymeter, synthcity, sklearn, pandas" 2>/dev/null; then
     echo "  MISSING: evaluation deps (anonymeter / synthcity / sklearn / pandas)"
-    echo "           Install with:  pip install -r requirements-eval.txt"
+    echo "           These are kept out of the base Docker image because"
+    echo "           they pull in PyTorch and XGBoost. Install once with:"
+    echo
+    echo "               bash scripts/install_eval_deps.sh"
+    echo
     missing=1
 else
     echo "  OK:      evaluation deps (anonymeter, synthcity, sklearn, pandas)"
