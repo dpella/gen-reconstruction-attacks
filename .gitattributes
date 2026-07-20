@@ -1,0 +1,40 @@
+# Enforce consistent line endings across Windows / macOS / Linux
+# clones. The devcontainer runs Linux, so anything the container reads
+# (scripts, Python, YAML, Dockerfile) must stay LF regardless of the
+# host OS.
+
+# Default: git decides whether a file is text; normalise text on commit.
+* text=auto
+
+# --- Force LF (scripts and everything the Linux container executes) ------
+*.sh           text eol=lf
+*.py           text eol=lf
+*.yaml         text eol=lf
+*.yml          text eol=lf
+*.json         text eol=lf
+*.sql          text eol=lf
+*.toml         text eol=lf
+*.cfg          text eol=lf
+*.ini          text eol=lf
+Dockerfile     text eol=lf
+Makefile       text eol=lf
+*.md           text eol=lf
+*.txt          text eol=lf
+*.csv          text eol=lf
+.gitignore     text eol=lf
+.gitattributes text eol=lf
+
+# --- Binary (never touch) ------------------------------------------------
+*.png          binary
+*.jpg          binary
+*.jpeg         binary
+*.gif          binary
+*.ico          binary
+*.pdf          binary
+*.zip          binary
+*.tar          binary
+*.tar.gz       binary
+*.tgz          binary
+*.pyc          binary
+*.pkl          binary
+*.parquet      binary
