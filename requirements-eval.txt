@@ -22,7 +22,8 @@
 
 torch>=2.4
 opacus<1.5
-scipy<1.14  # synthcity imports scipy.integrate.trapz (removed in 1.14)
+scipy<1.14        # synthcity imports scipy.integrate.trapz (removed in 1.14)
+pydantic<2        # synthcity's Schema BaseModel has non-annotated attributes (pydantic 1.x style)
 anonymeter
 synthcity
 scikit-learn
