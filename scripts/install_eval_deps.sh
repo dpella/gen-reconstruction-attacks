@@ -1,34 +1,43 @@
 #!/usr/bin/env bash
-# Install the privacy-metrics evaluation dependencies (anonymeter,
-# synthcity, scikit-learn, pandas). Kept out of the base Dockerfile
-# because synthcity pulls in PyTorch + XGBoost and takes 5-15 minutes
-# to install on a fresh image, which makes the devcontainer build
-# fragile.
+# Install (or upgrade) the privacy-metrics evaluation dependencies —
+# anonymeter, synthcity, PyTorch, XGBoost, scikit-learn, pandas.
 #
-# Run this once inside the devcontainer terminal:
+# Kept out of the base Dockerfile because synthcity pulls in PyTorch +
+# XGBoost and takes 5–15 minutes to install, which was making the
+# devcontainer build fragile.
+#
+# Run this once, and re-run any time you 'git pull' changes that touch
+# requirements-eval.txt:
 #     bash scripts/install_eval_deps.sh
-#
-# Afterwards, scripts/reproduce_privacy_metrics.sh can run.
 set -euo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO="$(cd "$HERE/.." && pwd)"
 
 echo "================================================================"
-echo "  Installing privacy-metrics evaluation dependencies"
-echo "  (anonymeter, synthcity, scikit-learn, pandas)"
-echo "  This will pull in PyTorch and XGBoost — expect 5-15 minutes."
+echo "  Installing / upgrading privacy-metrics evaluation dependencies"
+echo "  (anonymeter, synthcity, torch>=2.4, opacus<1.5, sklearn, pandas)"
+echo "  This will pull in PyTorch and XGBoost — expect 5–15 minutes."
 echo "================================================================"
 echo
 
-pip install --no-cache-dir -r "$REPO/requirements-eval.txt"
+# --upgrade so already-installed packages get bumped when
+# requirements-eval.txt tightens a pin (e.g. torch<2.4 → torch>=2.4).
+pip install --no-cache-dir --upgrade -r "$REPO/requirements-eval.txt"
 
 echo
-echo "-- Verifying imports --"
-python3 -c "import anonymeter; print('anonymeter', anonymeter.__version__ if hasattr(anonymeter, '__version__') else 'ok')"
-python3 -c "import synthcity;  print('synthcity',  synthcity.__version__  if hasattr(synthcity,  '__version__') else 'ok')"
-python3 -c "import sklearn;    print('sklearn',    sklearn.__version__)"
-python3 -c "import pandas;     print('pandas',     pandas.__version__)"
+echo "-- Installed versions --"
+python3 - <<'PY'
+def _v(m):
+    try:
+        mod = __import__(m)
+        return getattr(mod, "__version__", "ok")
+    except Exception as e:
+        return f"IMPORT FAILED: {e.__class__.__name__}: {e}"
+
+for m in ("torch", "opacus", "anonymeter", "synthcity", "sklearn", "pandas"):
+    print(f"  {m:<12} {_v(m)}")
+PY
 
 echo
 echo "Done. You can now run:  bash scripts/reproduce_privacy_metrics.sh"

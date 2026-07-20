@@ -3,18 +3,25 @@
 # generate reconstructable tables (see requirements.txt for those); they
 # are only needed to reproduce the §6.3 privacy-metrics results.
 #
-# Install with:  pip install -r requirements-eval.txt
+# Install with:  bash scripts/install_eval_deps.sh
 #
 # Note: synthcity pulls in a substantial PyTorch/XGBoost stack — expect
 # a several-hundred-MB download.
 #
-# torch>=2.4 is required because synthcity depends on opacus, and
-# opacus>=1.5 references torch.nn.RMSNorm (added in PyTorch 2.4).
-# Without this pin, pip resolves an older torch and opacus fails at
-# import time with:
-#     AttributeError: module 'torch.nn' has no attribute 'RMSNorm'
+# Two related pins target the opacus / torch mismatch that synthcity
+# users see under Python 3.11:
+#
+#   * torch>=2.4 — opacus>=1.5 references torch.nn.RMSNorm, which was
+#     only added in PyTorch 2.4. Without an upgrade to 2.4+, importing
+#     opacus (a synthcity transitive dep) crashes with:
+#         AttributeError: module 'torch.nn' has no attribute 'RMSNorm'
+#
+#   * opacus<1.5 — belt-and-suspenders. Even if pip somehow resolves to
+#     an older torch, capping opacus below 1.5 avoids the RMSNorm
+#     reference entirely.
 
 torch>=2.4
+opacus<1.5
 anonymeter
 synthcity
 scikit-learn
