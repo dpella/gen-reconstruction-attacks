@@ -1,0 +1,7 @@
+Schema        : sdtm_vs  (decoy-augmented, 10% reconstructable)
+  core / total : 16 / 160
+  aux cols     : 40
+  n_attacks    : 16
+  Anonymeter risk : 0.0000  CI [0.0000, 1.0000]
+  attack rate     : 0.9032  CI [0.0000, 0.0000]
+  control rate    : 0.9032  CI [0.0000, 0.0000]

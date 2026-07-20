@@ -1,0 +1,9 @@
+{
+  "schema": "hr_open_n256",
+  "n_core": 256,
+  "n_total": 2560,
+  "decoy_fraction": 0.1,
+  "data_leakage_xgb": 0.0,
+  "identifiability": 1.0,
+  "identifiability_oc": 0.00390625
+}

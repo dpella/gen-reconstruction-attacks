@@ -1,0 +1,9 @@
+Experiment: adam_adsl  [decoys: 10% reconstructable]
+  total records : 320
+  reconstructable: 32
+  n queries     : 32
+  matrix rank   : 32 / 32
+  full rank?    : True
+  decoy leakage : 0.0
+  max |ŝ − s|   : 3.056e-10
+  reconstructed : EXACT

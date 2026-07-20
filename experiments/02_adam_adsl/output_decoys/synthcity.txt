@@ -1,0 +1,4 @@
+Schema           : adam_adsl  (decoy-augmented, 10% reconstructable)
+  core / total    : 32 / 320
+  DataLeakageXGB  : 0.0000
+  Identifiability : 1.0000  (one-class: 1.0000)

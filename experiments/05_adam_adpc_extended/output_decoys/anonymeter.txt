@@ -1,0 +1,7 @@
+Schema        : adam_adpc_extended  (decoy-augmented, 10% reconstructable)
+  core / total : 256 / 2560
+  aux cols     : 601
+  n_attacks    : 256
+  Anonymeter risk : 0.0000  CI [0.0000, 1.0000]
+  attack rate     : 0.9926  CI [0.0000, 0.0000]
+  control rate    : 0.9926  CI [0.0000, 0.0000]

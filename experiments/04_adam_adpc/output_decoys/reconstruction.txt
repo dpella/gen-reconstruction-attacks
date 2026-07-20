@@ -1,0 +1,9 @@
+Experiment: adam_adpc  [decoys: 10% reconstructable]
+  total records : 1280
+  reconstructable: 128
+  n queries     : 128
+  matrix rank   : 128 / 128
+  full rank?    : True
+  decoy leakage : 0.0
+  max |ŝ − s|   : 8.858e-10
+  reconstructed : EXACT

@@ -1,0 +1,12 @@
+{
+  "schema": "eurostat_silc_n128",
+  "n_core": 128,
+  "n_total": 1280,
+  "decoy_fraction": 0.1,
+  "n_features": 311,
+  "mean_abs_error": 10293.623652574064,
+  "mean_rel_error": 1.259164655551051,
+  "rmse": 11744.731143545805,
+  "r2": 0.8404987262660246,
+  "attack_success_5pct": 0.1015625
+}

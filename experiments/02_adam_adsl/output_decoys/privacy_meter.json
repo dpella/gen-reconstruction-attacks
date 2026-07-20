@@ -1,0 +1,12 @@
+{
+  "schema": "adam_adsl",
+  "n_core": 32,
+  "n_total": 320,
+  "decoy_fraction": 0.1,
+  "n_features": 80,
+  "mean_abs_error": 9571.458859972492,
+  "mean_rel_error": 0.7660153781759559,
+  "rmse": 11678.014378958324,
+  "r2": 0.8277853795830644,
+  "attack_success_5pct": 0.15625
+}

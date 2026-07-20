@@ -1,0 +1,4 @@
+Schema           : adam_adpc_extended  (decoy-augmented, 10% reconstructable)
+  core / total    : 256 / 2560
+  DataLeakageXGB  : 0.0584
+  Identifiability : 1.0000  (one-class: 0.0000)

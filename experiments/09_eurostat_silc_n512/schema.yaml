@@ -1,0 +1,589 @@
+# Eurostat EU-SILC × HBS (Household Budget Survey) integrated flat file — n=512
+#
+# Schema origin: EU-SILC (Income & Living Conditions) and HBS (Household
+# Budget Survey) are both SDMX-compliant Eurostat microdata surveys.
+# NSIs routinely materialise an INTEGRATED per-household flat file for
+# poverty-and-living-standards modelling — pairing EU-SILC's annual
+# income/labour/health variables with HBS's 12-month expenditure diary
+# across the COICOP classification. The integrated file is a standard
+# analytical warehouse output.
+#
+# Construction: MIP base=8 with (p, c) = (0.5, 0.25), Hadamard k=7
+# (six Sylvester doublings) → n=512 households. 511 per-column queries
+# + 1 all-records = 512 queries. Each query aggregates p·n = 256
+# households.
+#
+# Sensitive (not released): total_disposable_income — equivalised
+# household disposable income (HY020 / HX090 in the EU-SILC DSD).
+#
+# All income subcomponents are OMITTED from the released schema.
+# Note: monthly expenditure is released as a range predicate — this
+# does NOT leak income because expenditure partially tracks income
+# but is not a deterministic function of it (households differ in
+# savings rate, debt, etc.).
+
+name: eurostat_silc_n512
+n_records: 512
+seed: 42
+
+mip_base: 8
+hadamard_order: 7
+population_value: 0.5
+communality_value: 0.25
+log_level: WARNING
+
+sensitive_column: total_disposable_income
+
+# 60 + 144 + 288 + 19 = 511
+compression_groups:
+  - name: age
+    columns: [column_0, column_1, column_2]
+    interval: 10   # years, 0-80
+  - name: hh_size
+    columns: [column_3, column_4, column_5]
+    interval: 1   # HH size, 0-8
+  - name: hh_children
+    columns: [column_6, column_7, column_8]
+    interval: 1   # children in HH, 0-8
+  - name: hh_rooms
+    columns: [column_9, column_10, column_11]
+    interval: 1   # rooms, 0-8
+  - name: floor_area
+    columns: [column_12, column_13, column_14]
+    interval: 20   # m², 0-160
+  - name: years_education
+    columns: [column_15, column_16, column_17]
+    interval: 3   # years educ, 0-24
+  - name: dwelling_age
+    columns: [column_18, column_19, column_20]
+    interval: 10   # dwelling yrs, 0-80
+  - name: distance_to_work_km
+    columns: [column_21, column_22, column_23]
+    interval: 10   # km, 0-80
+  - name: commute_minutes
+    columns: [column_24, column_25, column_26]
+    interval: 15   # min, 0-120
+  - name: num_cars
+    columns: [column_27, column_28, column_29]
+    interval: 1   # cars, 0-8
+  - name: hh_employed_count
+    columns: [column_30, column_31, column_32]
+    interval: 1   # employed in HH, 0-8
+  - name: hh_unemployed_count
+    columns: [column_33, column_34, column_35]
+    interval: 1   # unemployed in HH, 0-8
+  - name: years_in_current_home
+    columns: [column_36, column_37, column_38]
+    interval: 5   # yrs, 0-40
+  - name: chronic_conditions
+    columns: [column_39, column_40, column_41]
+    interval: 1   # count, 0-8
+  - name: internet_hours_daily
+    columns: [column_42, column_43, column_44]
+    interval: 2   # hrs, 0-16
+  - name: children_under_16
+    columns: [column_45, column_46, column_47]
+    interval: 1   # count, 0-8
+  - name: adults_over_65
+    columns: [column_48, column_49, column_50]
+    interval: 1   # count, 0-8
+  - name: pets_count
+    columns: [column_51, column_52, column_53]
+    interval: 1   # pets, 0-8
+  - name: bedrooms
+    columns: [column_54, column_55, column_56]
+    interval: 1   # bedrooms, 0-8
+  - name: bathrooms
+    columns: [column_57, column_58, column_59]
+    interval: 1   # bathrooms, 0-8
+  - name: housing_cost_y1
+    columns: [column_60, column_61, column_62]
+    interval: 250   # €/mo housing cost, y1
+  - name: housing_cost_y2
+    columns: [column_63, column_64, column_65]
+    interval: 250   # €/mo housing cost, y2
+  - name: housing_cost_y3
+    columns: [column_66, column_67, column_68]
+    interval: 250   # €/mo housing cost, y3
+  - name: housing_cost_y4
+    columns: [column_69, column_70, column_71]
+    interval: 250   # €/mo housing cost, y4
+  - name: hours_worked_y1
+    columns: [column_72, column_73, column_74]
+    interval: 8   # hrs/wk avg, y1
+  - name: hours_worked_y2
+    columns: [column_75, column_76, column_77]
+    interval: 8   # hrs/wk avg, y2
+  - name: hours_worked_y3
+    columns: [column_78, column_79, column_80]
+    interval: 8   # hrs/wk avg, y3
+  - name: hours_worked_y4
+    columns: [column_81, column_82, column_83]
+    interval: 8   # hrs/wk avg, y4
+  - name: heating_cost_y1
+    columns: [column_84, column_85, column_86]
+    interval: 40   # €/mo heating, y1
+  - name: heating_cost_y2
+    columns: [column_87, column_88, column_89]
+    interval: 40   # €/mo heating, y2
+  - name: heating_cost_y3
+    columns: [column_90, column_91, column_92]
+    interval: 40   # €/mo heating, y3
+  - name: heating_cost_y4
+    columns: [column_93, column_94, column_95]
+    interval: 40   # €/mo heating, y4
+  - name: medical_oop_y1
+    columns: [column_96, column_97, column_98]
+    interval: 100   # €/yr OOP medical, y1
+  - name: medical_oop_y2
+    columns: [column_99, column_100, column_101]
+    interval: 100   # €/yr OOP medical, y2
+  - name: medical_oop_y3
+    columns: [column_102, column_103, column_104]
+    interval: 100   # €/yr OOP medical, y3
+  - name: medical_oop_y4
+    columns: [column_105, column_106, column_107]
+    interval: 100   # €/yr OOP medical, y4
+  - name: months_employed_y1
+    columns: [column_108, column_109, column_110]
+    interval: 2   # months employed, y1
+  - name: months_employed_y2
+    columns: [column_111, column_112, column_113]
+    interval: 2   # months employed, y2
+  - name: months_employed_y3
+    columns: [column_114, column_115, column_116]
+    interval: 2   # months employed, y3
+  - name: months_employed_y4
+    columns: [column_117, column_118, column_119]
+    interval: 2   # months employed, y4
+  - name: months_unemployed_y1
+    columns: [column_120, column_121, column_122]
+    interval: 2   # months unemp, y1
+  - name: months_unemployed_y2
+    columns: [column_123, column_124, column_125]
+    interval: 2   # months unemp, y2
+  - name: months_unemployed_y3
+    columns: [column_126, column_127, column_128]
+    interval: 2   # months unemp, y3
+  - name: months_unemployed_y4
+    columns: [column_129, column_130, column_131]
+    interval: 2   # months unemp, y4
+  - name: months_sick_y1
+    columns: [column_132, column_133, column_134]
+    interval: 2   # months sick, y1
+  - name: months_sick_y2
+    columns: [column_135, column_136, column_137]
+    interval: 2   # months sick, y2
+  - name: months_sick_y3
+    columns: [column_138, column_139, column_140]
+    interval: 2   # months sick, y3
+  - name: months_sick_y4
+    columns: [column_141, column_142, column_143]
+    interval: 2   # months sick, y4
+  - name: savings_deposit_y1
+    columns: [column_144, column_145, column_146]
+    interval: 200   # €/yr savings, y1
+  - name: savings_deposit_y2
+    columns: [column_147, column_148, column_149]
+    interval: 200   # €/yr savings, y2
+  - name: savings_deposit_y3
+    columns: [column_150, column_151, column_152]
+    interval: 200   # €/yr savings, y3
+  - name: savings_deposit_y4
+    columns: [column_153, column_154, column_155]
+    interval: 200   # €/yr savings, y4
+  - name: doctor_visits_y1
+    columns: [column_156, column_157, column_158]
+    interval: 5   # GP visits, y1
+  - name: doctor_visits_y2
+    columns: [column_159, column_160, column_161]
+    interval: 5   # GP visits, y2
+  - name: doctor_visits_y3
+    columns: [column_162, column_163, column_164]
+    interval: 5   # GP visits, y3
+  - name: doctor_visits_y4
+    columns: [column_165, column_166, column_167]
+    interval: 5   # GP visits, y4
+  - name: training_hours_y1
+    columns: [column_168, column_169, column_170]
+    interval: 10   # training hrs/yr, y1
+  - name: training_hours_y2
+    columns: [column_171, column_172, column_173]
+    interval: 10   # training hrs/yr, y2
+  - name: training_hours_y3
+    columns: [column_174, column_175, column_176]
+    interval: 10   # training hrs/yr, y3
+  - name: training_hours_y4
+    columns: [column_177, column_178, column_179]
+    interval: 10   # training hrs/yr, y4
+  - name: child_care_cost_y1
+    columns: [column_180, column_181, column_182]
+    interval: 100   # €/mo childcare, y1
+  - name: child_care_cost_y2
+    columns: [column_183, column_184, column_185]
+    interval: 100   # €/mo childcare, y2
+  - name: child_care_cost_y3
+    columns: [column_186, column_187, column_188]
+    interval: 100   # €/mo childcare, y3
+  - name: child_care_cost_y4
+    columns: [column_189, column_190, column_191]
+    interval: 100   # €/mo childcare, y4
+  - name: commute_cost_y1
+    columns: [column_192, column_193, column_194]
+    interval: 50   # €/mo commuting, y1
+  - name: commute_cost_y2
+    columns: [column_195, column_196, column_197]
+    interval: 50   # €/mo commuting, y2
+  - name: commute_cost_y3
+    columns: [column_198, column_199, column_200]
+    interval: 50   # €/mo commuting, y3
+  - name: commute_cost_y4
+    columns: [column_201, column_202, column_203]
+    interval: 50   # €/mo commuting, y4
+  - name: exp_food_m01
+    columns: [column_204, column_205, column_206]
+    interval: 100   # € monthly expenditure on food, m01
+  - name: exp_food_m02
+    columns: [column_207, column_208, column_209]
+    interval: 100   # € monthly expenditure on food, m02
+  - name: exp_food_m03
+    columns: [column_210, column_211, column_212]
+    interval: 100   # € monthly expenditure on food, m03
+  - name: exp_food_m04
+    columns: [column_213, column_214, column_215]
+    interval: 100   # € monthly expenditure on food, m04
+  - name: exp_food_m05
+    columns: [column_216, column_217, column_218]
+    interval: 100   # € monthly expenditure on food, m05
+  - name: exp_food_m06
+    columns: [column_219, column_220, column_221]
+    interval: 100   # € monthly expenditure on food, m06
+  - name: exp_food_m07
+    columns: [column_222, column_223, column_224]
+    interval: 100   # € monthly expenditure on food, m07
+  - name: exp_food_m08
+    columns: [column_225, column_226, column_227]
+    interval: 100   # € monthly expenditure on food, m08
+  - name: exp_food_m09
+    columns: [column_228, column_229, column_230]
+    interval: 100   # € monthly expenditure on food, m09
+  - name: exp_food_m10
+    columns: [column_231, column_232, column_233]
+    interval: 100   # € monthly expenditure on food, m10
+  - name: exp_food_m11
+    columns: [column_234, column_235, column_236]
+    interval: 100   # € monthly expenditure on food, m11
+  - name: exp_food_m12
+    columns: [column_237, column_238, column_239]
+    interval: 100   # € monthly expenditure on food, m12
+  - name: exp_housing_utils_m01
+    columns: [column_240, column_241, column_242]
+    interval: 100   # € monthly expenditure on housing_utils, m01
+  - name: exp_housing_utils_m02
+    columns: [column_243, column_244, column_245]
+    interval: 100   # € monthly expenditure on housing_utils, m02
+  - name: exp_housing_utils_m03
+    columns: [column_246, column_247, column_248]
+    interval: 100   # € monthly expenditure on housing_utils, m03
+  - name: exp_housing_utils_m04
+    columns: [column_249, column_250, column_251]
+    interval: 100   # € monthly expenditure on housing_utils, m04
+  - name: exp_housing_utils_m05
+    columns: [column_252, column_253, column_254]
+    interval: 100   # € monthly expenditure on housing_utils, m05
+  - name: exp_housing_utils_m06
+    columns: [column_255, column_256, column_257]
+    interval: 100   # € monthly expenditure on housing_utils, m06
+  - name: exp_housing_utils_m07
+    columns: [column_258, column_259, column_260]
+    interval: 100   # € monthly expenditure on housing_utils, m07
+  - name: exp_housing_utils_m08
+    columns: [column_261, column_262, column_263]
+    interval: 100   # € monthly expenditure on housing_utils, m08
+  - name: exp_housing_utils_m09
+    columns: [column_264, column_265, column_266]
+    interval: 100   # € monthly expenditure on housing_utils, m09
+  - name: exp_housing_utils_m10
+    columns: [column_267, column_268, column_269]
+    interval: 100   # € monthly expenditure on housing_utils, m10
+  - name: exp_housing_utils_m11
+    columns: [column_270, column_271, column_272]
+    interval: 100   # € monthly expenditure on housing_utils, m11
+  - name: exp_housing_utils_m12
+    columns: [column_273, column_274, column_275]
+    interval: 100   # € monthly expenditure on housing_utils, m12
+  - name: exp_transport_m01
+    columns: [column_276, column_277, column_278]
+    interval: 100   # € monthly expenditure on transport, m01
+  - name: exp_transport_m02
+    columns: [column_279, column_280, column_281]
+    interval: 100   # € monthly expenditure on transport, m02
+  - name: exp_transport_m03
+    columns: [column_282, column_283, column_284]
+    interval: 100   # € monthly expenditure on transport, m03
+  - name: exp_transport_m04
+    columns: [column_285, column_286, column_287]
+    interval: 100   # € monthly expenditure on transport, m04
+  - name: exp_transport_m05
+    columns: [column_288, column_289, column_290]
+    interval: 100   # € monthly expenditure on transport, m05
+  - name: exp_transport_m06
+    columns: [column_291, column_292, column_293]
+    interval: 100   # € monthly expenditure on transport, m06
+  - name: exp_transport_m07
+    columns: [column_294, column_295, column_296]
+    interval: 100   # € monthly expenditure on transport, m07
+  - name: exp_transport_m08
+    columns: [column_297, column_298, column_299]
+    interval: 100   # € monthly expenditure on transport, m08
+  - name: exp_transport_m09
+    columns: [column_300, column_301, column_302]
+    interval: 100   # € monthly expenditure on transport, m09
+  - name: exp_transport_m10
+    columns: [column_303, column_304, column_305]
+    interval: 100   # € monthly expenditure on transport, m10
+  - name: exp_transport_m11
+    columns: [column_306, column_307, column_308]
+    interval: 100   # € monthly expenditure on transport, m11
+  - name: exp_transport_m12
+    columns: [column_309, column_310, column_311]
+    interval: 100   # € monthly expenditure on transport, m12
+  - name: exp_communication_m01
+    columns: [column_312, column_313, column_314]
+    interval: 100   # € monthly expenditure on communication, m01
+  - name: exp_communication_m02
+    columns: [column_315, column_316, column_317]
+    interval: 100   # € monthly expenditure on communication, m02
+  - name: exp_communication_m03
+    columns: [column_318, column_319, column_320]
+    interval: 100   # € monthly expenditure on communication, m03
+  - name: exp_communication_m04
+    columns: [column_321, column_322, column_323]
+    interval: 100   # € monthly expenditure on communication, m04
+  - name: exp_communication_m05
+    columns: [column_324, column_325, column_326]
+    interval: 100   # € monthly expenditure on communication, m05
+  - name: exp_communication_m06
+    columns: [column_327, column_328, column_329]
+    interval: 100   # € monthly expenditure on communication, m06
+  - name: exp_communication_m07
+    columns: [column_330, column_331, column_332]
+    interval: 100   # € monthly expenditure on communication, m07
+  - name: exp_communication_m08
+    columns: [column_333, column_334, column_335]
+    interval: 100   # € monthly expenditure on communication, m08
+  - name: exp_communication_m09
+    columns: [column_336, column_337, column_338]
+    interval: 100   # € monthly expenditure on communication, m09
+  - name: exp_communication_m10
+    columns: [column_339, column_340, column_341]
+    interval: 100   # € monthly expenditure on communication, m10
+  - name: exp_communication_m11
+    columns: [column_342, column_343, column_344]
+    interval: 100   # € monthly expenditure on communication, m11
+  - name: exp_communication_m12
+    columns: [column_345, column_346, column_347]
+    interval: 100   # € monthly expenditure on communication, m12
+  - name: exp_recreation_m01
+    columns: [column_348, column_349, column_350]
+    interval: 100   # € monthly expenditure on recreation, m01
+  - name: exp_recreation_m02
+    columns: [column_351, column_352, column_353]
+    interval: 100   # € monthly expenditure on recreation, m02
+  - name: exp_recreation_m03
+    columns: [column_354, column_355, column_356]
+    interval: 100   # € monthly expenditure on recreation, m03
+  - name: exp_recreation_m04
+    columns: [column_357, column_358, column_359]
+    interval: 100   # € monthly expenditure on recreation, m04
+  - name: exp_recreation_m05
+    columns: [column_360, column_361, column_362]
+    interval: 100   # € monthly expenditure on recreation, m05
+  - name: exp_recreation_m06
+    columns: [column_363, column_364, column_365]
+    interval: 100   # € monthly expenditure on recreation, m06
+  - name: exp_recreation_m07
+    columns: [column_366, column_367, column_368]
+    interval: 100   # € monthly expenditure on recreation, m07
+  - name: exp_recreation_m08
+    columns: [column_369, column_370, column_371]
+    interval: 100   # € monthly expenditure on recreation, m08
+  - name: exp_recreation_m09
+    columns: [column_372, column_373, column_374]
+    interval: 100   # € monthly expenditure on recreation, m09
+  - name: exp_recreation_m10
+    columns: [column_375, column_376, column_377]
+    interval: 100   # € monthly expenditure on recreation, m10
+  - name: exp_recreation_m11
+    columns: [column_378, column_379, column_380]
+    interval: 100   # € monthly expenditure on recreation, m11
+  - name: exp_recreation_m12
+    columns: [column_381, column_382, column_383]
+    interval: 100   # € monthly expenditure on recreation, m12
+  - name: exp_education_m01
+    columns: [column_384, column_385, column_386]
+    interval: 100   # € monthly expenditure on education, m01
+  - name: exp_education_m02
+    columns: [column_387, column_388, column_389]
+    interval: 100   # € monthly expenditure on education, m02
+  - name: exp_education_m03
+    columns: [column_390, column_391, column_392]
+    interval: 100   # € monthly expenditure on education, m03
+  - name: exp_education_m04
+    columns: [column_393, column_394, column_395]
+    interval: 100   # € monthly expenditure on education, m04
+  - name: exp_education_m05
+    columns: [column_396, column_397, column_398]
+    interval: 100   # € monthly expenditure on education, m05
+  - name: exp_education_m06
+    columns: [column_399, column_400, column_401]
+    interval: 100   # € monthly expenditure on education, m06
+  - name: exp_education_m07
+    columns: [column_402, column_403, column_404]
+    interval: 100   # € monthly expenditure on education, m07
+  - name: exp_education_m08
+    columns: [column_405, column_406, column_407]
+    interval: 100   # € monthly expenditure on education, m08
+  - name: exp_education_m09
+    columns: [column_408, column_409, column_410]
+    interval: 100   # € monthly expenditure on education, m09
+  - name: exp_education_m10
+    columns: [column_411, column_412, column_413]
+    interval: 100   # € monthly expenditure on education, m10
+  - name: exp_education_m11
+    columns: [column_414, column_415, column_416]
+    interval: 100   # € monthly expenditure on education, m11
+  - name: exp_education_m12
+    columns: [column_417, column_418, column_419]
+    interval: 100   # € monthly expenditure on education, m12
+  - name: exp_health_m01
+    columns: [column_420, column_421, column_422]
+    interval: 100   # € monthly expenditure on health, m01
+  - name: exp_health_m02
+    columns: [column_423, column_424, column_425]
+    interval: 100   # € monthly expenditure on health, m02
+  - name: exp_health_m03
+    columns: [column_426, column_427, column_428]
+    interval: 100   # € monthly expenditure on health, m03
+  - name: exp_health_m04
+    columns: [column_429, column_430, column_431]
+    interval: 100   # € monthly expenditure on health, m04
+  - name: exp_health_m05
+    columns: [column_432, column_433, column_434]
+    interval: 100   # € monthly expenditure on health, m05
+  - name: exp_health_m06
+    columns: [column_435, column_436, column_437]
+    interval: 100   # € monthly expenditure on health, m06
+  - name: exp_health_m07
+    columns: [column_438, column_439, column_440]
+    interval: 100   # € monthly expenditure on health, m07
+  - name: exp_health_m08
+    columns: [column_441, column_442, column_443]
+    interval: 100   # € monthly expenditure on health, m08
+  - name: exp_health_m09
+    columns: [column_444, column_445, column_446]
+    interval: 100   # € monthly expenditure on health, m09
+  - name: exp_health_m10
+    columns: [column_447, column_448, column_449]
+    interval: 100   # € monthly expenditure on health, m10
+  - name: exp_health_m11
+    columns: [column_450, column_451, column_452]
+    interval: 100   # € monthly expenditure on health, m11
+  - name: exp_health_m12
+    columns: [column_453, column_454, column_455]
+    interval: 100   # € monthly expenditure on health, m12
+  - name: exp_restaurants_m01
+    columns: [column_456, column_457, column_458]
+    interval: 100   # € monthly expenditure on restaurants, m01
+  - name: exp_restaurants_m02
+    columns: [column_459, column_460, column_461]
+    interval: 100   # € monthly expenditure on restaurants, m02
+  - name: exp_restaurants_m03
+    columns: [column_462, column_463, column_464]
+    interval: 100   # € monthly expenditure on restaurants, m03
+  - name: exp_restaurants_m04
+    columns: [column_465, column_466, column_467]
+    interval: 100   # € monthly expenditure on restaurants, m04
+  - name: exp_restaurants_m05
+    columns: [column_468, column_469, column_470]
+    interval: 100   # € monthly expenditure on restaurants, m05
+  - name: exp_restaurants_m06
+    columns: [column_471, column_472, column_473]
+    interval: 100   # € monthly expenditure on restaurants, m06
+  - name: exp_restaurants_m07
+    columns: [column_474, column_475, column_476]
+    interval: 100   # € monthly expenditure on restaurants, m07
+  - name: exp_restaurants_m08
+    columns: [column_477, column_478, column_479]
+    interval: 100   # € monthly expenditure on restaurants, m08
+  - name: exp_restaurants_m09
+    columns: [column_480, column_481, column_482]
+    interval: 100   # € monthly expenditure on restaurants, m09
+  - name: exp_restaurants_m10
+    columns: [column_483, column_484, column_485]
+    interval: 100   # € monthly expenditure on restaurants, m10
+  - name: exp_restaurants_m11
+    columns: [column_486, column_487, column_488]
+    interval: 100   # € monthly expenditure on restaurants, m11
+  - name: exp_restaurants_m12
+    columns: [column_489, column_490, column_491]
+    interval: 100   # € monthly expenditure on restaurants, m12
+
+binary_rename:
+  column_492:
+    name: sex
+    values: {"1": F, "0": M, "2": M, "3": M}
+  column_493:
+    name: marital_status
+    values: {"1": MARRIED, "0": SINGLE, "2": DIVORCED, "3": WIDOWED}
+  column_494:
+    name: country
+    values: {"1": DEU, "0": FRA, "2": ITA, "3": ESP}
+  column_495:
+    name: education_level
+    values: {"1": TERTIARY, "0": UPPER_SEC, "2": LOWER_SEC, "3": PRIMARY}
+  column_496:
+    name: urbanization
+    values: {"1": DENSE, "0": INTERMEDIATE, "2": THIN, "3": THIN}
+  column_497:
+    name: tenure_status
+    values: {"1": OWNER_FREE, "0": OWNER_MORTGAGE, "2": TENANT_MARKET, "3": TENANT_REDUCED}
+  column_498:
+    name: employment_status
+    values: {"1": EMPLOYED, "0": UNEMPLOYED, "2": RETIRED, "3": OTHER_INACTIVE}
+  column_499:
+    name: health_status
+    values: {"1": VERY_GOOD, "0": GOOD, "2": FAIR, "3": POOR}
+  column_500:
+    name: chronic_illness
+    values: {"1": Y, "0": N, "2": N, "3": N}
+  column_501:
+    name: disability
+    values: {"1": Y, "0": N, "2": N, "3": N}
+  column_502:
+    name: internet_access
+    values: {"1": Y, "0": N, "2": N, "3": N}
+  column_503:
+    name: mobile_phone
+    values: {"1": Y, "0": N, "2": N, "3": N}
+  column_504:
+    name: pc_access
+    values: {"1": Y, "0": N, "2": N, "3": N}
+  column_505:
+    name: hh_arrears_rent
+    values: {"1": Y, "0": N, "2": N, "3": N}
+  column_506:
+    name: hh_arrears_utility
+    values: {"1": Y, "0": N, "2": N, "3": N}
+  column_507:
+    name: hh_afford_vacation
+    values: {"1": Y, "0": N, "2": N, "3": N}
+  column_508:
+    name: hh_afford_meat_meal
+    values: {"1": Y, "0": N, "2": N, "3": N}
+  column_509:
+    name: hh_afford_warm_home
+    values: {"1": Y, "0": N, "2": NA, "3": UNK}
+  column_510:
+    name: hh_material_deprived
+    values: {"1": Y, "0": N, "2": N, "3": N}

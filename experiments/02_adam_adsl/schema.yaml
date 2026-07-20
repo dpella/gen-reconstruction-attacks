@@ -1,0 +1,79 @@
+# ADaM ADSL (Subject-Level Analysis) reconstructable dataset — n=32
+#
+# Schema origin: CDISC ADaM Subject-Level Analysis Dataset (ADSL), the
+# canonical one-row-per-subject table used as the backbone of clinical
+# trial analysis.
+#
+# Construction: MIP base=8 with (p, c) = (0.5, 0.25), Hadamard k=3
+# (two Sylvester doublings) → n=32 subjects. 31 queries cover one column
+# each + 1 all-records query = 32 queries total. Each query aggregates
+# p·n = 16 subjects.
+#
+# Sensitive column (not released): egfrbl — baseline estimated Glomerular
+# Filtration Rate. Standard renal-trial endpoint, clinically sensitive,
+# independent of the demographics and baseline covariates kept here.
+
+name: adam_adsl
+n_records: 32
+seed: 42
+
+mip_base: 8
+hadamard_order: 3
+population_value: 0.5
+communality_value: 0.25
+log_level: WARNING
+
+sensitive_column: egfrbl
+
+# 31 query-columns = 21 bits compressed (numerical) + 10 binary/categorical
+compression_groups:
+  - name: age               # years; 16 bins × 5 = 0-80
+    columns: [column_0, column_1, column_2, column_3]
+    interval: 5
+  - name: heightbl          # cm at baseline; 16 bins × 10 = 0-160
+    columns: [column_4, column_5, column_6, column_7]
+    interval: 10
+  - name: weightbl          # kg at baseline; 16 bins × 10 = 0-160
+    columns: [column_8, column_9, column_10, column_11]
+    interval: 10
+  - name: bmibl             # kg/m²; 8 bins × 5 = 0-40
+    columns: [column_12, column_13, column_14]
+    interval: 5
+  - name: durdis            # months, disease duration; 8 bins × 6 = 0-48
+    columns: [column_15, column_16, column_17]
+    interval: 6
+  - name: trtdurd           # days of treatment; 8 bins × 30 = 0-240
+    columns: [column_18, column_19, column_20]
+    interval: 30
+
+binary_rename:
+  column_21:
+    name: sex
+    values: {"1": M, "0": F, "2": F, "3": F}
+  column_22:
+    name: race
+    values: {"1": WHITE, "0": BLACK, "2": ASIAN, "3": OTHER}
+  column_23:
+    name: ethnic
+    values: {"1": "HISPANIC OR LATINO", "0": "NOT HISPANIC OR LATINO", "2": "NOT HISPANIC OR LATINO", "3": "NOT HISPANIC OR LATINO"}
+  column_24:
+    name: country
+    values: {"1": USA, "0": DEU, "2": FRA, "3": GBR}
+  column_25:
+    name: armcd
+    values: {"1": PLACEBO, "0": ACTIVE, "2": ACTIVE, "3": ACTIVE}
+  column_26:
+    name: agegr1
+    values: {"1": "65-80", "0": "18-64", "2": "18-64", "3": "18-64"}
+  column_27:
+    name: saffl              # Safety Analysis Flag
+    values: {"1": Y, "0": N, "2": N, "3": N}
+  column_28:
+    name: ittfl              # Intent-to-Treat Flag
+    values: {"1": Y, "0": N, "2": N, "3": N}
+  column_29:
+    name: compfl             # Completion Flag (decoy-ready: distinct strings for '2','3')
+    values: {"1": Y, "0": N, "2": NA, "3": UNK}
+  column_30:
+    name: fasfl              # Full Analysis Set Flag
+    values: {"1": Y, "0": N, "2": N, "3": N}

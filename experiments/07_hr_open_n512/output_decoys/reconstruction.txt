@@ -1,0 +1,9 @@
+Experiment: hr_open_n512  [decoys: 10% reconstructable]
+  total records : 5120
+  reconstructable: 512
+  n queries     : 512
+  matrix rank   : 512 / 512
+  full rank?    : True
+  decoy leakage : 0.0
+  max |ŝ − s|   : 1.816e-08
+  reconstructed : EXACT

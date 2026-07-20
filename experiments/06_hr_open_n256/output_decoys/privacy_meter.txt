@@ -1,0 +1,8 @@
+Schema                : hr_open_n256  (decoy-augmented, 10% reconstructable)
+  core / total         : 256 / 2560
+  features             : 587
+  mean relative error  : 53.21%
+  mean absolute error  : 9715.04
+  RMSE                 : 11279.62
+  R²                   : 0.8393
+  attack success (±5%) : 13.28% of core

@@ -1,0 +1,207 @@
+# Eurostat EU-SILC (European Union Statistics on Income and Living
+# Conditions) — subject-level household profile, 4-year rotational
+# panel — n=128
+#
+# Schema origin: EU-SILC is the EU's flagship microdata source on
+# income, poverty, and living conditions, collected annually by all
+# member states under SDMX-compliant DSDs. One row per household,
+# columns = demographics + employment + housing + health +
+# material-deprivation flags + 4-year panel of labor-market and cost
+# variables.  Eurostat publishes hundreds of aggregate cuts annually
+# (by country × age × sex × household type × urbanisation).
+#
+# Construction: MIP base=8 with (p, c) = (0.5, 0.25), Hadamard k=5
+# (four Sylvester doublings) → n=128 households. 127 per-column
+# queries + 1 all-records = 128 queries. Each query aggregates
+# p·n = 64 households.
+#
+# Sensitive (not released): total_disposable_income —
+# equivalised household disposable income (HY020 / HX090 in the
+# EU-SILC DSD). This is the standard poverty-measurement variable.
+#
+# All income subcomponents (PY010, PY050, HY040, HY090, PY100-140,
+# HY050-080, HY140, …) are OMITTED from the released schema —
+# they are additive components of the sensitive variable and would
+# leak trivially.
+
+name: eurostat_silc_n128
+n_records: 128
+seed: 42
+
+mip_base: 8
+hadamard_order: 5
+population_value: 0.5
+communality_value: 0.25
+log_level: WARNING
+
+sensitive_column: total_disposable_income
+
+# 60 + 48 + 19 = 127
+compression_groups:
+  - name: age
+    columns: [column_0, column_1, column_2]
+    interval: 10   # years, 0-80
+  - name: hh_size
+    columns: [column_3, column_4, column_5]
+    interval: 1   # household size, 0-8
+  - name: hh_children
+    columns: [column_6, column_7, column_8]
+    interval: 1   # number of children, 0-8
+  - name: hh_rooms
+    columns: [column_9, column_10, column_11]
+    interval: 1   # number of rooms, 0-8
+  - name: floor_area
+    columns: [column_12, column_13, column_14]
+    interval: 20   # dwelling floor area m², 0-160
+  - name: years_education
+    columns: [column_15, column_16, column_17]
+    interval: 3   # years completed education, 0-24
+  - name: dwelling_age
+    columns: [column_18, column_19, column_20]
+    interval: 10   # dwelling age yrs, 0-80
+  - name: hours_worked_main
+    columns: [column_21, column_22, column_23]
+    interval: 8   # hours/wk main job, 0-64
+  - name: years_paid_work
+    columns: [column_24, column_25, column_26]
+    interval: 6   # total yrs in paid work, 0-48
+  - name: distance_to_work_km
+    columns: [column_27, column_28, column_29]
+    interval: 10   # km to workplace, 0-80
+  - name: commute_minutes
+    columns: [column_30, column_31, column_32]
+    interval: 15   # commute min, 0-120
+  - name: num_cars
+    columns: [column_33, column_34, column_35]
+    interval: 1   # cars owned, 0-8
+  - name: hh_employed_count
+    columns: [column_36, column_37, column_38]
+    interval: 1   # employed persons in HH, 0-8
+  - name: hh_unemployed_count
+    columns: [column_39, column_40, column_41]
+    interval: 1   # unemployed persons in HH, 0-8
+  - name: months_sick_last_yr
+    columns: [column_42, column_43, column_44]
+    interval: 2   # months sick, 0-16
+  - name: chronic_conditions
+    columns: [column_45, column_46, column_47]
+    interval: 1   # chronic conditions, 0-8
+  - name: doctor_visits_yr
+    columns: [column_48, column_49, column_50]
+    interval: 5   # GP visits last yr, 0-40
+  - name: years_current_home
+    columns: [column_51, column_52, column_53]
+    interval: 5   # yrs in current home, 0-40
+  - name: internet_hours_daily
+    columns: [column_54, column_55, column_56]
+    interval: 2   # internet hrs/day, 0-16
+  - name: children_under_16
+    columns: [column_57, column_58, column_59]
+    interval: 1   # children <16, 0-8
+  - name: housing_cost_y1
+    columns: [column_60, column_61, column_62]
+    interval: 250   # €/month housing cost, y1, 0-2000
+  - name: housing_cost_y2
+    columns: [column_63, column_64, column_65]
+    interval: 250   # €/month housing cost, y2, 0-2000
+  - name: housing_cost_y3
+    columns: [column_66, column_67, column_68]
+    interval: 250   # €/month housing cost, y3, 0-2000
+  - name: housing_cost_y4
+    columns: [column_69, column_70, column_71]
+    interval: 250   # €/month housing cost, y4, 0-2000
+  - name: hours_worked_y1
+    columns: [column_72, column_73, column_74]
+    interval: 8   # avg hrs/wk worked, y1, 0-64
+  - name: hours_worked_y2
+    columns: [column_75, column_76, column_77]
+    interval: 8   # avg hrs/wk worked, y2, 0-64
+  - name: hours_worked_y3
+    columns: [column_78, column_79, column_80]
+    interval: 8   # avg hrs/wk worked, y3, 0-64
+  - name: hours_worked_y4
+    columns: [column_81, column_82, column_83]
+    interval: 8   # avg hrs/wk worked, y4, 0-64
+  - name: heating_cost_y1
+    columns: [column_84, column_85, column_86]
+    interval: 40   # €/month heating, y1, 0-320
+  - name: heating_cost_y2
+    columns: [column_87, column_88, column_89]
+    interval: 40   # €/month heating, y2, 0-320
+  - name: heating_cost_y3
+    columns: [column_90, column_91, column_92]
+    interval: 40   # €/month heating, y3, 0-320
+  - name: heating_cost_y4
+    columns: [column_93, column_94, column_95]
+    interval: 40   # €/month heating, y4, 0-320
+  - name: medical_oop_y1
+    columns: [column_96, column_97, column_98]
+    interval: 100   # €/yr medical out-of-pocket, y1, 0-800
+  - name: medical_oop_y2
+    columns: [column_99, column_100, column_101]
+    interval: 100   # €/yr medical out-of-pocket, y2, 0-800
+  - name: medical_oop_y3
+    columns: [column_102, column_103, column_104]
+    interval: 100   # €/yr medical out-of-pocket, y3, 0-800
+  - name: medical_oop_y4
+    columns: [column_105, column_106, column_107]
+    interval: 100   # €/yr medical out-of-pocket, y4, 0-800
+
+binary_rename:
+  column_108:
+    name: sex
+    values: {"1": F, "0": M, "2": M, "3": M}
+  column_109:
+    name: marital_status
+    values: {"1": MARRIED, "0": SINGLE, "2": DIVORCED, "3": WIDOWED}
+  column_110:
+    name: country
+    values: {"1": DEU, "0": FRA, "2": ITA, "3": ESP}
+  column_111:
+    name: education_level
+    values: {"1": TERTIARY, "0": UPPER_SEC, "2": LOWER_SEC, "3": PRIMARY}
+  column_112:
+    name: urbanization
+    values: {"1": DENSE, "0": INTERMEDIATE, "2": THIN, "3": THIN}
+  column_113:
+    name: tenure_status
+    values: {"1": OWNER_FREE, "0": OWNER_MORTGAGE, "2": TENANT_MARKET, "3": TENANT_REDUCED}
+  column_114:
+    name: employment_status
+    values: {"1": EMPLOYED, "0": UNEMPLOYED, "2": RETIRED, "3": OTHER_INACTIVE}
+  column_115:
+    name: health_status
+    values: {"1": VERY_GOOD, "0": GOOD, "2": FAIR, "3": POOR}
+  column_116:
+    name: chronic_illness
+    values: {"1": Y, "0": N, "2": N, "3": N}
+  column_117:
+    name: disability
+    values: {"1": Y, "0": N, "2": N, "3": N}
+  column_118:
+    name: internet_access
+    values: {"1": Y, "0": N, "2": N, "3": N}
+  column_119:
+    name: mobile_phone
+    values: {"1": Y, "0": N, "2": N, "3": N}
+  column_120:
+    name: pc_access
+    values: {"1": Y, "0": N, "2": N, "3": N}
+  column_121:
+    name: hh_arrears_rent
+    values: {"1": Y, "0": N, "2": N, "3": N}
+  column_122:
+    name: hh_arrears_utility
+    values: {"1": Y, "0": N, "2": N, "3": N}
+  column_123:
+    name: hh_afford_vacation
+    values: {"1": Y, "0": N, "2": N, "3": N}
+  column_124:
+    name: hh_afford_meat_meal
+    values: {"1": Y, "0": N, "2": N, "3": N}
+  column_125:
+    name: hh_afford_warm_home
+    values: {"1": Y, "0": N, "2": NA, "3": UNK}
+  column_126:
+    name: hh_material_deprived
+    values: {"1": Y, "0": N, "2": N, "3": N}

@@ -1,0 +1,8 @@
+Schema                : eurostat_silc_n128  (decoy-augmented, 10% reconstructable)
+  core / total         : 128 / 1280
+  features             : 311
+  mean relative error  : 125.92%
+  mean absolute error  : 10293.62
+  RMSE                 : 11744.73
+  R²                   : 0.8405
+  attack success (±5%) : 10.16% of core

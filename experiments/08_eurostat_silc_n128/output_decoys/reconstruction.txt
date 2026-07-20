@@ -1,0 +1,9 @@
+Experiment: eurostat_silc_n128  [decoys: 10% reconstructable]
+  total records : 1280
+  reconstructable: 128
+  n queries     : 128
+  matrix rank   : 128 / 128
+  full rank?    : True
+  decoy leakage : 0.0
+  max |ŝ − s|   : 1.106e-09
+  reconstructed : EXACT

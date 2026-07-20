@@ -1,0 +1,22 @@
+{
+  "schema": "eurostat_silc_n128",
+  "n_core": 128,
+  "n_total": 1280,
+  "decoy_fraction": 0.1,
+  "n_attacks": 128,
+  "n_aux_cols": 311,
+  "risk_value": 0.0,
+  "risk_ci_low": 0.0,
+  "risk_ci_high": 1.0,
+  "attack_rate": 0.9854315218632458,
+  "attack_rate_ci": [
+    0.0,
+    0.0
+  ],
+  "control_rate": 0.9854315218632458,
+  "control_rate_ci": [
+    0.0,
+    0.0
+  ],
+  "baseline_rate": 0.0600776833114335
+}

@@ -1,0 +1,7 @@
+Schema        : adam_adlb  (decoy-augmented, 10% reconstructable)
+  core / total : 64 / 640
+  aux cols     : 153
+  n_attacks    : 64
+  Anonymeter risk : 0.0000  CI [0.0000, 1.0000]
+  attack rate     : 0.9717  CI [0.0000, 0.0000]
+  control rate    : 0.9717  CI [0.0000, 0.0000]

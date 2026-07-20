@@ -1,0 +1,9 @@
+{
+  "schema": "sdtm_vs",
+  "n_core": 16,
+  "n_total": 160,
+  "decoy_fraction": 0.1,
+  "data_leakage_xgb": 0.0,
+  "identifiability": 1.0,
+  "identifiability_oc": 0.1875
+}

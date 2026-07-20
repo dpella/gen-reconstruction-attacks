@@ -1,0 +1,12 @@
+{
+  "schema": "sdtm_vs",
+  "n_core": 16,
+  "n_total": 160,
+  "decoy_fraction": 0.1,
+  "n_features": 40,
+  "mean_abs_error": 11548.6689662682,
+  "mean_rel_error": 4.468879833068221,
+  "rmse": 13555.276531225465,
+  "r2": 0.8170062766105051,
+  "attack_success_5pct": 0.125
+}

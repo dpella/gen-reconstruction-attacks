@@ -1,0 +1,22 @@
+{
+  "schema": "adam_adsl",
+  "n_core": 32,
+  "n_total": 320,
+  "decoy_fraction": 0.1,
+  "n_attacks": 32,
+  "n_aux_cols": 80,
+  "risk_value": 0.0,
+  "risk_ci_low": 0.0,
+  "risk_ci_high": 1.0,
+  "attack_rate": 0.9464104008724646,
+  "attack_rate_ci": [
+    0.0,
+    0.0
+  ],
+  "control_rate": 0.9464104008724646,
+  "control_rate_ci": [
+    0.0,
+    0.0
+  ],
+  "baseline_rate": 0.0535895991275353
+}

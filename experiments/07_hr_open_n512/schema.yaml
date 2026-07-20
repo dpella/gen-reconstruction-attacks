@@ -1,0 +1,565 @@
+# HR Open Standards (subject-level employee profile with 3 years of
+# monthly KPIs — the 'integrated people-analytics warehouse' flat file) — n=512
+#
+# Schema origin: HR Open Standards / HR-XML. Enterprise HRIS warehouses
+# (Workday, SuccessFactors, BambooHR) and consulting-firm people-analytics
+# teams routinely materialize per-employee flat files with 3 years of
+# monthly KPIs for downstream modeling (attrition, compensation equity,
+# utilization forecasting). 511 released aggregates correspond to a
+# typical BI dashboard's worth of per-cohort metrics.
+#
+# Construction: MIP base=8 with (p, c) = (0.5, 0.25), Hadamard k=7
+# (six Sylvester doublings) → n=512 employees. 511 per-column queries +
+# 1 all-records = 512 queries. Each query aggregates p·n = 256 employees.
+#
+# Sensitive (not released): salary — annual base salary.
+# Derived comp fields (bonus, equity, total_comp, billing_rate) are
+# OMITTED from the released schema — they are functions of salary.
+
+name: hr_open_n512
+n_records: 512
+seed: 42
+
+mip_base: 8
+hadamard_order: 7
+population_value: 0.5
+communality_value: 0.25
+log_level: WARNING
+
+sensitive_column: salary
+
+# 69 + 432 + 10 = 511
+compression_groups:
+  - name: age
+    columns: [column_0, column_1, column_2]
+    interval: 10   # years, 0-80
+  - name: tenure_years
+    columns: [column_3, column_4, column_5]
+    interval: 5   # yrs at company, 0-40
+  - name: years_experience
+    columns: [column_6, column_7, column_8]
+    interval: 6   # total career yrs, 0-48
+  - name: years_in_role
+    columns: [column_9, column_10, column_11]
+    interval: 2   # yrs in current role, 0-16
+  - name: years_in_company
+    columns: [column_12, column_13, column_14]
+    interval: 5   # yrs total in company group, 0-40
+  - name: direct_reports
+    columns: [column_15, column_16, column_17]
+    interval: 3   # direct reports, 0-24
+  - name: indirect_reports_span
+    columns: [column_18, column_19, column_20]
+    interval: 8   # indirect reports, 0-64
+  - name: training_hours_y1
+    columns: [column_21, column_22, column_23]
+    interval: 10   # training hrs yr1, 0-80
+  - name: training_hours_y2
+    columns: [column_24, column_25, column_26]
+    interval: 10   # training hrs yr2, 0-80
+  - name: training_hours_y3
+    columns: [column_27, column_28, column_29]
+    interval: 10   # training hrs yr3, 0-80
+  - name: pto_balance_days
+    columns: [column_30, column_31, column_32]
+    interval: 4   # PTO balance days, 0-32
+  - name: sick_days_ytd
+    columns: [column_33, column_34, column_35]
+    interval: 2   # sick days YTD, 0-16
+  - name: pto_taken_y1
+    columns: [column_36, column_37, column_38]
+    interval: 4   # PTO taken yr1, 0-32
+  - name: pto_taken_y2
+    columns: [column_39, column_40, column_41]
+    interval: 4   # PTO taken yr2, 0-32
+  - name: pto_taken_y3
+    columns: [column_42, column_43, column_44]
+    interval: 4   # PTO taken yr3, 0-32
+  - name: commute_miles
+    columns: [column_45, column_46, column_47]
+    interval: 6   # miles, 0-48
+  - name: certifications_count
+    columns: [column_48, column_49, column_50]
+    interval: 2   # certs held, 0-16
+  - name: languages_spoken
+    columns: [column_51, column_52, column_53]
+    interval: 1   # languages, 0-8
+  - name: projects_count_y1
+    columns: [column_54, column_55, column_56]
+    interval: 3   # projects yr1, 0-24
+  - name: projects_count_y2
+    columns: [column_57, column_58, column_59]
+    interval: 3   # projects yr2, 0-24
+  - name: projects_count_y3
+    columns: [column_60, column_61, column_62]
+    interval: 3   # projects yr3, 0-24
+  - name: publications_count
+    columns: [column_63, column_64, column_65]
+    interval: 2   # publications, 0-16
+  - name: patents_count
+    columns: [column_66, column_67, column_68]
+    interval: 1   # patents, 0-8
+  - name: bill_hrs_y1m01
+    columns: [column_69, column_70, column_71]
+    interval: 30   # billable hrs, y1m01, 0-240
+  - name: bill_hrs_y1m02
+    columns: [column_72, column_73, column_74]
+    interval: 30   # billable hrs, y1m02, 0-240
+  - name: bill_hrs_y1m03
+    columns: [column_75, column_76, column_77]
+    interval: 30   # billable hrs, y1m03, 0-240
+  - name: bill_hrs_y1m04
+    columns: [column_78, column_79, column_80]
+    interval: 30   # billable hrs, y1m04, 0-240
+  - name: bill_hrs_y1m05
+    columns: [column_81, column_82, column_83]
+    interval: 30   # billable hrs, y1m05, 0-240
+  - name: bill_hrs_y1m06
+    columns: [column_84, column_85, column_86]
+    interval: 30   # billable hrs, y1m06, 0-240
+  - name: bill_hrs_y1m07
+    columns: [column_87, column_88, column_89]
+    interval: 30   # billable hrs, y1m07, 0-240
+  - name: bill_hrs_y1m08
+    columns: [column_90, column_91, column_92]
+    interval: 30   # billable hrs, y1m08, 0-240
+  - name: bill_hrs_y1m09
+    columns: [column_93, column_94, column_95]
+    interval: 30   # billable hrs, y1m09, 0-240
+  - name: bill_hrs_y1m10
+    columns: [column_96, column_97, column_98]
+    interval: 30   # billable hrs, y1m10, 0-240
+  - name: bill_hrs_y1m11
+    columns: [column_99, column_100, column_101]
+    interval: 30   # billable hrs, y1m11, 0-240
+  - name: bill_hrs_y1m12
+    columns: [column_102, column_103, column_104]
+    interval: 30   # billable hrs, y1m12, 0-240
+  - name: bill_hrs_y2m01
+    columns: [column_105, column_106, column_107]
+    interval: 30   # billable hrs, y2m01, 0-240
+  - name: bill_hrs_y2m02
+    columns: [column_108, column_109, column_110]
+    interval: 30   # billable hrs, y2m02, 0-240
+  - name: bill_hrs_y2m03
+    columns: [column_111, column_112, column_113]
+    interval: 30   # billable hrs, y2m03, 0-240
+  - name: bill_hrs_y2m04
+    columns: [column_114, column_115, column_116]
+    interval: 30   # billable hrs, y2m04, 0-240
+  - name: bill_hrs_y2m05
+    columns: [column_117, column_118, column_119]
+    interval: 30   # billable hrs, y2m05, 0-240
+  - name: bill_hrs_y2m06
+    columns: [column_120, column_121, column_122]
+    interval: 30   # billable hrs, y2m06, 0-240
+  - name: bill_hrs_y2m07
+    columns: [column_123, column_124, column_125]
+    interval: 30   # billable hrs, y2m07, 0-240
+  - name: bill_hrs_y2m08
+    columns: [column_126, column_127, column_128]
+    interval: 30   # billable hrs, y2m08, 0-240
+  - name: bill_hrs_y2m09
+    columns: [column_129, column_130, column_131]
+    interval: 30   # billable hrs, y2m09, 0-240
+  - name: bill_hrs_y2m10
+    columns: [column_132, column_133, column_134]
+    interval: 30   # billable hrs, y2m10, 0-240
+  - name: bill_hrs_y2m11
+    columns: [column_135, column_136, column_137]
+    interval: 30   # billable hrs, y2m11, 0-240
+  - name: bill_hrs_y2m12
+    columns: [column_138, column_139, column_140]
+    interval: 30   # billable hrs, y2m12, 0-240
+  - name: bill_hrs_y3m01
+    columns: [column_141, column_142, column_143]
+    interval: 30   # billable hrs, y3m01, 0-240
+  - name: bill_hrs_y3m02
+    columns: [column_144, column_145, column_146]
+    interval: 30   # billable hrs, y3m02, 0-240
+  - name: bill_hrs_y3m03
+    columns: [column_147, column_148, column_149]
+    interval: 30   # billable hrs, y3m03, 0-240
+  - name: bill_hrs_y3m04
+    columns: [column_150, column_151, column_152]
+    interval: 30   # billable hrs, y3m04, 0-240
+  - name: bill_hrs_y3m05
+    columns: [column_153, column_154, column_155]
+    interval: 30   # billable hrs, y3m05, 0-240
+  - name: bill_hrs_y3m06
+    columns: [column_156, column_157, column_158]
+    interval: 30   # billable hrs, y3m06, 0-240
+  - name: bill_hrs_y3m07
+    columns: [column_159, column_160, column_161]
+    interval: 30   # billable hrs, y3m07, 0-240
+  - name: bill_hrs_y3m08
+    columns: [column_162, column_163, column_164]
+    interval: 30   # billable hrs, y3m08, 0-240
+  - name: bill_hrs_y3m09
+    columns: [column_165, column_166, column_167]
+    interval: 30   # billable hrs, y3m09, 0-240
+  - name: bill_hrs_y3m10
+    columns: [column_168, column_169, column_170]
+    interval: 30   # billable hrs, y3m10, 0-240
+  - name: bill_hrs_y3m11
+    columns: [column_171, column_172, column_173]
+    interval: 30   # billable hrs, y3m11, 0-240
+  - name: bill_hrs_y3m12
+    columns: [column_174, column_175, column_176]
+    interval: 30   # billable hrs, y3m12, 0-240
+  - name: util_pct_y1m01
+    columns: [column_177, column_178, column_179]
+    interval: 15   # utilization %, y1m01, 0-120
+  - name: util_pct_y1m02
+    columns: [column_180, column_181, column_182]
+    interval: 15   # utilization %, y1m02, 0-120
+  - name: util_pct_y1m03
+    columns: [column_183, column_184, column_185]
+    interval: 15   # utilization %, y1m03, 0-120
+  - name: util_pct_y1m04
+    columns: [column_186, column_187, column_188]
+    interval: 15   # utilization %, y1m04, 0-120
+  - name: util_pct_y1m05
+    columns: [column_189, column_190, column_191]
+    interval: 15   # utilization %, y1m05, 0-120
+  - name: util_pct_y1m06
+    columns: [column_192, column_193, column_194]
+    interval: 15   # utilization %, y1m06, 0-120
+  - name: util_pct_y1m07
+    columns: [column_195, column_196, column_197]
+    interval: 15   # utilization %, y1m07, 0-120
+  - name: util_pct_y1m08
+    columns: [column_198, column_199, column_200]
+    interval: 15   # utilization %, y1m08, 0-120
+  - name: util_pct_y1m09
+    columns: [column_201, column_202, column_203]
+    interval: 15   # utilization %, y1m09, 0-120
+  - name: util_pct_y1m10
+    columns: [column_204, column_205, column_206]
+    interval: 15   # utilization %, y1m10, 0-120
+  - name: util_pct_y1m11
+    columns: [column_207, column_208, column_209]
+    interval: 15   # utilization %, y1m11, 0-120
+  - name: util_pct_y1m12
+    columns: [column_210, column_211, column_212]
+    interval: 15   # utilization %, y1m12, 0-120
+  - name: util_pct_y2m01
+    columns: [column_213, column_214, column_215]
+    interval: 15   # utilization %, y2m01, 0-120
+  - name: util_pct_y2m02
+    columns: [column_216, column_217, column_218]
+    interval: 15   # utilization %, y2m02, 0-120
+  - name: util_pct_y2m03
+    columns: [column_219, column_220, column_221]
+    interval: 15   # utilization %, y2m03, 0-120
+  - name: util_pct_y2m04
+    columns: [column_222, column_223, column_224]
+    interval: 15   # utilization %, y2m04, 0-120
+  - name: util_pct_y2m05
+    columns: [column_225, column_226, column_227]
+    interval: 15   # utilization %, y2m05, 0-120
+  - name: util_pct_y2m06
+    columns: [column_228, column_229, column_230]
+    interval: 15   # utilization %, y2m06, 0-120
+  - name: util_pct_y2m07
+    columns: [column_231, column_232, column_233]
+    interval: 15   # utilization %, y2m07, 0-120
+  - name: util_pct_y2m08
+    columns: [column_234, column_235, column_236]
+    interval: 15   # utilization %, y2m08, 0-120
+  - name: util_pct_y2m09
+    columns: [column_237, column_238, column_239]
+    interval: 15   # utilization %, y2m09, 0-120
+  - name: util_pct_y2m10
+    columns: [column_240, column_241, column_242]
+    interval: 15   # utilization %, y2m10, 0-120
+  - name: util_pct_y2m11
+    columns: [column_243, column_244, column_245]
+    interval: 15   # utilization %, y2m11, 0-120
+  - name: util_pct_y2m12
+    columns: [column_246, column_247, column_248]
+    interval: 15   # utilization %, y2m12, 0-120
+  - name: util_pct_y3m01
+    columns: [column_249, column_250, column_251]
+    interval: 15   # utilization %, y3m01, 0-120
+  - name: util_pct_y3m02
+    columns: [column_252, column_253, column_254]
+    interval: 15   # utilization %, y3m02, 0-120
+  - name: util_pct_y3m03
+    columns: [column_255, column_256, column_257]
+    interval: 15   # utilization %, y3m03, 0-120
+  - name: util_pct_y3m04
+    columns: [column_258, column_259, column_260]
+    interval: 15   # utilization %, y3m04, 0-120
+  - name: util_pct_y3m05
+    columns: [column_261, column_262, column_263]
+    interval: 15   # utilization %, y3m05, 0-120
+  - name: util_pct_y3m06
+    columns: [column_264, column_265, column_266]
+    interval: 15   # utilization %, y3m06, 0-120
+  - name: util_pct_y3m07
+    columns: [column_267, column_268, column_269]
+    interval: 15   # utilization %, y3m07, 0-120
+  - name: util_pct_y3m08
+    columns: [column_270, column_271, column_272]
+    interval: 15   # utilization %, y3m08, 0-120
+  - name: util_pct_y3m09
+    columns: [column_273, column_274, column_275]
+    interval: 15   # utilization %, y3m09, 0-120
+  - name: util_pct_y3m10
+    columns: [column_276, column_277, column_278]
+    interval: 15   # utilization %, y3m10, 0-120
+  - name: util_pct_y3m11
+    columns: [column_279, column_280, column_281]
+    interval: 15   # utilization %, y3m11, 0-120
+  - name: util_pct_y3m12
+    columns: [column_282, column_283, column_284]
+    interval: 15   # utilization %, y3m12, 0-120
+  - name: overtime_y1m01
+    columns: [column_285, column_286, column_287]
+    interval: 10   # OT hrs, y1m01, 0-80
+  - name: overtime_y1m02
+    columns: [column_288, column_289, column_290]
+    interval: 10   # OT hrs, y1m02, 0-80
+  - name: overtime_y1m03
+    columns: [column_291, column_292, column_293]
+    interval: 10   # OT hrs, y1m03, 0-80
+  - name: overtime_y1m04
+    columns: [column_294, column_295, column_296]
+    interval: 10   # OT hrs, y1m04, 0-80
+  - name: overtime_y1m05
+    columns: [column_297, column_298, column_299]
+    interval: 10   # OT hrs, y1m05, 0-80
+  - name: overtime_y1m06
+    columns: [column_300, column_301, column_302]
+    interval: 10   # OT hrs, y1m06, 0-80
+  - name: overtime_y1m07
+    columns: [column_303, column_304, column_305]
+    interval: 10   # OT hrs, y1m07, 0-80
+  - name: overtime_y1m08
+    columns: [column_306, column_307, column_308]
+    interval: 10   # OT hrs, y1m08, 0-80
+  - name: overtime_y1m09
+    columns: [column_309, column_310, column_311]
+    interval: 10   # OT hrs, y1m09, 0-80
+  - name: overtime_y1m10
+    columns: [column_312, column_313, column_314]
+    interval: 10   # OT hrs, y1m10, 0-80
+  - name: overtime_y1m11
+    columns: [column_315, column_316, column_317]
+    interval: 10   # OT hrs, y1m11, 0-80
+  - name: overtime_y1m12
+    columns: [column_318, column_319, column_320]
+    interval: 10   # OT hrs, y1m12, 0-80
+  - name: overtime_y2m01
+    columns: [column_321, column_322, column_323]
+    interval: 10   # OT hrs, y2m01, 0-80
+  - name: overtime_y2m02
+    columns: [column_324, column_325, column_326]
+    interval: 10   # OT hrs, y2m02, 0-80
+  - name: overtime_y2m03
+    columns: [column_327, column_328, column_329]
+    interval: 10   # OT hrs, y2m03, 0-80
+  - name: overtime_y2m04
+    columns: [column_330, column_331, column_332]
+    interval: 10   # OT hrs, y2m04, 0-80
+  - name: overtime_y2m05
+    columns: [column_333, column_334, column_335]
+    interval: 10   # OT hrs, y2m05, 0-80
+  - name: overtime_y2m06
+    columns: [column_336, column_337, column_338]
+    interval: 10   # OT hrs, y2m06, 0-80
+  - name: overtime_y2m07
+    columns: [column_339, column_340, column_341]
+    interval: 10   # OT hrs, y2m07, 0-80
+  - name: overtime_y2m08
+    columns: [column_342, column_343, column_344]
+    interval: 10   # OT hrs, y2m08, 0-80
+  - name: overtime_y2m09
+    columns: [column_345, column_346, column_347]
+    interval: 10   # OT hrs, y2m09, 0-80
+  - name: overtime_y2m10
+    columns: [column_348, column_349, column_350]
+    interval: 10   # OT hrs, y2m10, 0-80
+  - name: overtime_y2m11
+    columns: [column_351, column_352, column_353]
+    interval: 10   # OT hrs, y2m11, 0-80
+  - name: overtime_y2m12
+    columns: [column_354, column_355, column_356]
+    interval: 10   # OT hrs, y2m12, 0-80
+  - name: overtime_y3m01
+    columns: [column_357, column_358, column_359]
+    interval: 10   # OT hrs, y3m01, 0-80
+  - name: overtime_y3m02
+    columns: [column_360, column_361, column_362]
+    interval: 10   # OT hrs, y3m02, 0-80
+  - name: overtime_y3m03
+    columns: [column_363, column_364, column_365]
+    interval: 10   # OT hrs, y3m03, 0-80
+  - name: overtime_y3m04
+    columns: [column_366, column_367, column_368]
+    interval: 10   # OT hrs, y3m04, 0-80
+  - name: overtime_y3m05
+    columns: [column_369, column_370, column_371]
+    interval: 10   # OT hrs, y3m05, 0-80
+  - name: overtime_y3m06
+    columns: [column_372, column_373, column_374]
+    interval: 10   # OT hrs, y3m06, 0-80
+  - name: overtime_y3m07
+    columns: [column_375, column_376, column_377]
+    interval: 10   # OT hrs, y3m07, 0-80
+  - name: overtime_y3m08
+    columns: [column_378, column_379, column_380]
+    interval: 10   # OT hrs, y3m08, 0-80
+  - name: overtime_y3m09
+    columns: [column_381, column_382, column_383]
+    interval: 10   # OT hrs, y3m09, 0-80
+  - name: overtime_y3m10
+    columns: [column_384, column_385, column_386]
+    interval: 10   # OT hrs, y3m10, 0-80
+  - name: overtime_y3m11
+    columns: [column_387, column_388, column_389]
+    interval: 10   # OT hrs, y3m11, 0-80
+  - name: overtime_y3m12
+    columns: [column_390, column_391, column_392]
+    interval: 10   # OT hrs, y3m12, 0-80
+  - name: hours_worked_y1m01
+    columns: [column_393, column_394, column_395]
+    interval: 30   # hrs worked, y1m01, 0-240
+  - name: hours_worked_y1m02
+    columns: [column_396, column_397, column_398]
+    interval: 30   # hrs worked, y1m02, 0-240
+  - name: hours_worked_y1m03
+    columns: [column_399, column_400, column_401]
+    interval: 30   # hrs worked, y1m03, 0-240
+  - name: hours_worked_y1m04
+    columns: [column_402, column_403, column_404]
+    interval: 30   # hrs worked, y1m04, 0-240
+  - name: hours_worked_y1m05
+    columns: [column_405, column_406, column_407]
+    interval: 30   # hrs worked, y1m05, 0-240
+  - name: hours_worked_y1m06
+    columns: [column_408, column_409, column_410]
+    interval: 30   # hrs worked, y1m06, 0-240
+  - name: hours_worked_y1m07
+    columns: [column_411, column_412, column_413]
+    interval: 30   # hrs worked, y1m07, 0-240
+  - name: hours_worked_y1m08
+    columns: [column_414, column_415, column_416]
+    interval: 30   # hrs worked, y1m08, 0-240
+  - name: hours_worked_y1m09
+    columns: [column_417, column_418, column_419]
+    interval: 30   # hrs worked, y1m09, 0-240
+  - name: hours_worked_y1m10
+    columns: [column_420, column_421, column_422]
+    interval: 30   # hrs worked, y1m10, 0-240
+  - name: hours_worked_y1m11
+    columns: [column_423, column_424, column_425]
+    interval: 30   # hrs worked, y1m11, 0-240
+  - name: hours_worked_y1m12
+    columns: [column_426, column_427, column_428]
+    interval: 30   # hrs worked, y1m12, 0-240
+  - name: hours_worked_y2m01
+    columns: [column_429, column_430, column_431]
+    interval: 30   # hrs worked, y2m01, 0-240
+  - name: hours_worked_y2m02
+    columns: [column_432, column_433, column_434]
+    interval: 30   # hrs worked, y2m02, 0-240
+  - name: hours_worked_y2m03
+    columns: [column_435, column_436, column_437]
+    interval: 30   # hrs worked, y2m03, 0-240
+  - name: hours_worked_y2m04
+    columns: [column_438, column_439, column_440]
+    interval: 30   # hrs worked, y2m04, 0-240
+  - name: hours_worked_y2m05
+    columns: [column_441, column_442, column_443]
+    interval: 30   # hrs worked, y2m05, 0-240
+  - name: hours_worked_y2m06
+    columns: [column_444, column_445, column_446]
+    interval: 30   # hrs worked, y2m06, 0-240
+  - name: hours_worked_y2m07
+    columns: [column_447, column_448, column_449]
+    interval: 30   # hrs worked, y2m07, 0-240
+  - name: hours_worked_y2m08
+    columns: [column_450, column_451, column_452]
+    interval: 30   # hrs worked, y2m08, 0-240
+  - name: hours_worked_y2m09
+    columns: [column_453, column_454, column_455]
+    interval: 30   # hrs worked, y2m09, 0-240
+  - name: hours_worked_y2m10
+    columns: [column_456, column_457, column_458]
+    interval: 30   # hrs worked, y2m10, 0-240
+  - name: hours_worked_y2m11
+    columns: [column_459, column_460, column_461]
+    interval: 30   # hrs worked, y2m11, 0-240
+  - name: hours_worked_y2m12
+    columns: [column_462, column_463, column_464]
+    interval: 30   # hrs worked, y2m12, 0-240
+  - name: hours_worked_y3m01
+    columns: [column_465, column_466, column_467]
+    interval: 30   # hrs worked, y3m01, 0-240
+  - name: hours_worked_y3m02
+    columns: [column_468, column_469, column_470]
+    interval: 30   # hrs worked, y3m02, 0-240
+  - name: hours_worked_y3m03
+    columns: [column_471, column_472, column_473]
+    interval: 30   # hrs worked, y3m03, 0-240
+  - name: hours_worked_y3m04
+    columns: [column_474, column_475, column_476]
+    interval: 30   # hrs worked, y3m04, 0-240
+  - name: hours_worked_y3m05
+    columns: [column_477, column_478, column_479]
+    interval: 30   # hrs worked, y3m05, 0-240
+  - name: hours_worked_y3m06
+    columns: [column_480, column_481, column_482]
+    interval: 30   # hrs worked, y3m06, 0-240
+  - name: hours_worked_y3m07
+    columns: [column_483, column_484, column_485]
+    interval: 30   # hrs worked, y3m07, 0-240
+  - name: hours_worked_y3m08
+    columns: [column_486, column_487, column_488]
+    interval: 30   # hrs worked, y3m08, 0-240
+  - name: hours_worked_y3m09
+    columns: [column_489, column_490, column_491]
+    interval: 30   # hrs worked, y3m09, 0-240
+  - name: hours_worked_y3m10
+    columns: [column_492, column_493, column_494]
+    interval: 30   # hrs worked, y3m10, 0-240
+  - name: hours_worked_y3m11
+    columns: [column_495, column_496, column_497]
+    interval: 30   # hrs worked, y3m11, 0-240
+  - name: hours_worked_y3m12
+    columns: [column_498, column_499, column_500]
+    interval: 30   # hrs worked, y3m12, 0-240
+
+binary_rename:
+  column_501:
+    name: sex
+    values: {"1": M, "0": F, "2": F, "3": F}
+  column_502:
+    name: department
+    values: {"1": CONSULTING, "0": SALES, "2": ENGINEERING, "3": OPERATIONS}
+  column_503:
+    name: employment_type
+    values: {"1": FULLTIME, "0": PARTTIME, "2": CONTRACTOR, "3": INTERN}
+  column_504:
+    name: education_level
+    values: {"1": PHD, "0": BS, "2": MS, "3": HS}
+  column_505:
+    name: country
+    values: {"1": USA, "0": DEU, "2": GBR, "3": IND}
+  column_506:
+    name: remote_flag
+    values: {"1": Y, "0": N, "2": N, "3": N}
+  column_507:
+    name: union_member
+    values: {"1": Y, "0": N, "2": N, "3": N}
+  column_508:
+    name: equity_eligible
+    values: {"1": Y, "0": N, "2": N, "3": N}
+  column_509:
+    name: benefits_tier
+    values: {"1": PREMIUM, "0": STANDARD, "2": BASIC, "3": COMP}
+  column_510:
+    name: stock_eligible
+    values: {"1": Y, "0": N, "2": N, "3": N}

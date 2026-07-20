@@ -1,0 +1,7 @@
+Schema        : adam_adsl  (decoy-augmented, 10% reconstructable)
+  core / total : 32 / 320
+  aux cols     : 80
+  n_attacks    : 32
+  Anonymeter risk : 0.0000  CI [0.0000, 1.0000]
+  attack rate     : 0.9464  CI [0.0000, 0.0000]
+  control rate    : 0.9464  CI [0.0000, 0.0000]

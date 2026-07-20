@@ -1,0 +1,9 @@
+Experiment: sdtm_vs  [decoys: 10% reconstructable]
+  total records : 160
+  reconstructable: 16
+  n queries     : 16
+  matrix rank   : 16 / 16
+  full rank?    : True
+  decoy leakage : 0.0
+  max |ŝ − s|   : 1.762e-10
+  reconstructed : EXACT

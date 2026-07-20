@@ -1,0 +1,52 @@
+# SDTM VS (Vital Signs) reconstructable dataset — n=16
+#
+# Schema origin: CDISC SDTM Vital Signs domain (VS), pivoted wide so each row
+# is one subject and each column is one vital-sign measurement.
+#
+# Construction: MIP base=8 with (p, c) = (0.5, 0.25), then Hadamard k=2
+# (one Sylvester doubling) to reach n=16. 15 queries cover one column each
+# + 1 all-records query = 16 queries total.
+#
+# Sensitive column (not released): sysbp — systolic blood pressure.
+# Clinically sensitive, not derivable from the other vitals kept.
+
+name: sdtm_vs
+n_records: 16
+seed: 42
+
+mip_base: 8
+hadamard_order: 2
+population_value: 0.5
+communality_value: 0.25
+log_level: WARNING
+
+sensitive_column: sysbp
+
+# 15 non-all-records queries = 12 bits compressed + 3 binary columns
+compression_groups:
+  - name: diabp            # diastolic BP, mmHg (bins of 10)
+    columns: [column_0, column_1, column_2]
+    interval: 10
+  - name: pulse            # heart rate, bpm (bins of 10)
+    columns: [column_3, column_4, column_5]
+    interval: 10
+  - name: height           # cm (bins of 30)
+    columns: [column_6, column_7]
+    interval: 30
+  - name: weight           # kg (bins of 30)
+    columns: [column_8, column_9]
+    interval: 30
+  - name: bmi              # kg/m² (bins of 10)
+    columns: [column_10, column_11]
+    interval: 10
+
+binary_rename:
+  column_12:
+    name: sex
+    values: {"1": M, "0": F, "2": F, "3": F}
+  column_13:
+    name: race
+    values: {"1": WHITE, "0": BLACK, "2": ASIAN, "3": OTHER}
+  column_14:
+    name: vsblfl           # SDTM baseline flag
+    values: {"1": Y, "0": N, "2": N, "3": N}

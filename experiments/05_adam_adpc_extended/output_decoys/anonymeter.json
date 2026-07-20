@@ -1,0 +1,22 @@
+{
+  "schema": "adam_adpc_extended",
+  "n_core": 256,
+  "n_total": 2560,
+  "decoy_fraction": 0.1,
+  "n_attacks": 256,
+  "n_aux_cols": 601,
+  "risk_value": 0.0,
+  "risk_ci_low": 0.0,
+  "risk_ci_high": 1.0,
+  "attack_rate": 0.9926080717870642,
+  "attack_rate_ci": [
+    0.0,
+    0.0
+  ],
+  "control_rate": 0.9926080717870642,
+  "control_rate_ci": [
+    0.0,
+    0.0
+  ],
+  "baseline_rate": 0.04202843326046367
+}

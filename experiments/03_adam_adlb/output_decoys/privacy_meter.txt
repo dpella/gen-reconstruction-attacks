@@ -1,0 +1,8 @@
+Schema                : adam_adlb  (decoy-augmented, 10% reconstructable)
+  core / total         : 64 / 640
+  features             : 153
+  mean relative error  : 44.90%
+  mean absolute error  : 9478.41
+  RMSE                 : 11243.05
+  R²                   : 0.8258
+  attack success (±5%) : 17.19% of core

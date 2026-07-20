@@ -1,0 +1,165 @@
+# ADaM ADPC (Pharmacokinetic Concentrations) — n=128
+#
+# Schema origin: CDISC ADaM Pharmacokinetic Concentrations dataset.
+# Pivoted so each subject has one row, and each column is the PK
+# concentration at one nominal timepoint in one study period
+# (two-period crossover: single-dose [p1] + steady-state [p2]).
+#
+# Construction: MIP base=8 with (p, c) = (0.5, 0.25), Hadamard k=5
+# (four Sylvester doublings) → n=128 subjects. 127 per-column queries +
+# 1 all-records = 128 queries. Each query aggregates p·n = 64 subjects.
+#
+# Sensitive (not released): conc_24h — the 24-hour post-dose
+# concentration in period 1 (trough surrogate / CYP-phenotype proxy).
+
+name: adam_adpc
+n_records: 128
+seed: 42
+
+mip_base: 8
+hadamard_order: 5
+population_value: 0.5
+communality_value: 0.25
+log_level: WARNING
+
+sensitive_column: conc_24h
+
+# 39 concentration columns × 3 bits + demographics + 3 binary = 127
+compression_groups:
+  - name: c1_0h
+    columns: [column_0, column_1, column_2]
+    interval: 50   # ng/mL, period 1 t=0h
+  - name: c1_0_25h
+    columns: [column_3, column_4, column_5]
+    interval: 50   # ng/mL, period 1 t=0.25h
+  - name: c1_0_5h
+    columns: [column_6, column_7, column_8]
+    interval: 50   # ng/mL, period 1 t=0.5h
+  - name: c1_1h
+    columns: [column_9, column_10, column_11]
+    interval: 50   # ng/mL, period 1 t=1h
+  - name: c1_1_5h
+    columns: [column_12, column_13, column_14]
+    interval: 50   # ng/mL, period 1 t=1.5h
+  - name: c1_2h
+    columns: [column_15, column_16, column_17]
+    interval: 50   # ng/mL, period 1 t=2h
+  - name: c1_3h
+    columns: [column_18, column_19, column_20]
+    interval: 50   # ng/mL, period 1 t=3h
+  - name: c1_4h
+    columns: [column_21, column_22, column_23]
+    interval: 50   # ng/mL, period 1 t=4h
+  - name: c1_6h
+    columns: [column_24, column_25, column_26]
+    interval: 50   # ng/mL, period 1 t=6h
+  - name: c1_8h
+    columns: [column_27, column_28, column_29]
+    interval: 50   # ng/mL, period 1 t=8h
+  - name: c1_12h
+    columns: [column_30, column_31, column_32]
+    interval: 50   # ng/mL, period 1 t=12h
+  - name: c1_16h
+    columns: [column_33, column_34, column_35]
+    interval: 50   # ng/mL, period 1 t=16h
+  - name: c1_36h
+    columns: [column_36, column_37, column_38]
+    interval: 50   # ng/mL, period 1 t=36h
+  - name: c1_48h
+    columns: [column_39, column_40, column_41]
+    interval: 50   # ng/mL, period 1 t=48h
+  - name: c1_72h
+    columns: [column_42, column_43, column_44]
+    interval: 50   # ng/mL, period 1 t=72h
+  - name: c1_96h
+    columns: [column_45, column_46, column_47]
+    interval: 50   # ng/mL, period 1 t=96h
+  - name: c1_120h
+    columns: [column_48, column_49, column_50]
+    interval: 50   # ng/mL, period 1 t=120h
+  - name: c1_144h
+    columns: [column_51, column_52, column_53]
+    interval: 50   # ng/mL, period 1 t=144h
+  - name: c1_168h
+    columns: [column_54, column_55, column_56]
+    interval: 50   # ng/mL, period 1 t=168h
+  - name: c2_0h
+    columns: [column_57, column_58, column_59]
+    interval: 50   # ng/mL, period 2 t=0h
+  - name: c2_0_25h
+    columns: [column_60, column_61, column_62]
+    interval: 50   # ng/mL, period 2 t=0.25h
+  - name: c2_0_5h
+    columns: [column_63, column_64, column_65]
+    interval: 50   # ng/mL, period 2 t=0.5h
+  - name: c2_1h
+    columns: [column_66, column_67, column_68]
+    interval: 50   # ng/mL, period 2 t=1h
+  - name: c2_1_5h
+    columns: [column_69, column_70, column_71]
+    interval: 50   # ng/mL, period 2 t=1.5h
+  - name: c2_2h
+    columns: [column_72, column_73, column_74]
+    interval: 50   # ng/mL, period 2 t=2h
+  - name: c2_3h
+    columns: [column_75, column_76, column_77]
+    interval: 50   # ng/mL, period 2 t=3h
+  - name: c2_4h
+    columns: [column_78, column_79, column_80]
+    interval: 50   # ng/mL, period 2 t=4h
+  - name: c2_6h
+    columns: [column_81, column_82, column_83]
+    interval: 50   # ng/mL, period 2 t=6h
+  - name: c2_8h
+    columns: [column_84, column_85, column_86]
+    interval: 50   # ng/mL, period 2 t=8h
+  - name: c2_12h
+    columns: [column_87, column_88, column_89]
+    interval: 50   # ng/mL, period 2 t=12h
+  - name: c2_16h
+    columns: [column_90, column_91, column_92]
+    interval: 50   # ng/mL, period 2 t=16h
+  - name: c2_24h
+    columns: [column_93, column_94, column_95]
+    interval: 50   # ng/mL, period 2 t=24h
+  - name: c2_36h
+    columns: [column_96, column_97, column_98]
+    interval: 50   # ng/mL, period 2 t=36h
+  - name: c2_48h
+    columns: [column_99, column_100, column_101]
+    interval: 50   # ng/mL, period 2 t=48h
+  - name: c2_72h
+    columns: [column_102, column_103, column_104]
+    interval: 50   # ng/mL, period 2 t=72h
+  - name: c2_96h
+    columns: [column_105, column_106, column_107]
+    interval: 50   # ng/mL, period 2 t=96h
+  - name: c2_120h
+    columns: [column_108, column_109, column_110]
+    interval: 50   # ng/mL, period 2 t=120h
+  - name: c2_144h
+    columns: [column_111, column_112, column_113]
+    interval: 50   # ng/mL, period 2 t=144h
+  - name: c2_168h
+    columns: [column_114, column_115, column_116]
+    interval: 50   # ng/mL, period 2 t=168h
+  - name: age
+    columns: [column_117, column_118, column_119]
+    interval: 10   # years, 8 bins × 10 = 0-80
+  - name: heightbl
+    columns: [column_120, column_121]
+    interval: 40   # cm, 4 bins × 40 = 0-160
+  - name: weightbl
+    columns: [column_122, column_123]
+    interval: 40   # kg, 4 bins × 40 = 0-160
+
+binary_rename:
+  column_124:
+    name: sex
+    values: {"1": M, "0": F, "2": F, "3": F}
+  column_125:
+    name: race
+    values: {"1": WHITE, "0": BLACK, "2": ASIAN, "3": OTHER}
+  column_126:
+    name: country
+    values: {"1": USA, "0": DEU, "2": FRA, "3": GBR}

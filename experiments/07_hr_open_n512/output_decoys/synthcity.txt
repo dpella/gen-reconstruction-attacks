@@ -1,0 +1,4 @@
+Schema           : hr_open_n512  (decoy-augmented, 10% reconstructable)
+  core / total    : 512 / 5120
+  DataLeakageXGB  : 0.0000
+  Identifiability : 1.0000  (one-class: 0.0039)

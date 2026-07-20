@@ -1,0 +1,22 @@
+{
+  "schema": "sdtm_vs",
+  "n_core": 16,
+  "n_total": 160,
+  "decoy_fraction": 0.1,
+  "n_attacks": 16,
+  "n_aux_cols": 40,
+  "risk_value": 0.0,
+  "risk_ci_low": 0.0,
+  "risk_ci_high": 1.0,
+  "attack_rate": 0.9031961597327819,
+  "attack_rate_ci": [
+    0.0,
+    0.0
+  ],
+  "control_rate": 0.9031961597327819,
+  "control_rate_ci": [
+    0.0,
+    0.0
+  ],
+  "baseline_rate": 0.14720336023381597
+}

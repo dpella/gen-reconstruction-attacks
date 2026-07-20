@@ -1,0 +1,112 @@
+# ADaM ADLB (Laboratory Analysis, combined chem + hematology) — n=64
+#
+# Schema origin: CDISC ADaM Laboratory Analysis Dataset (ADLB), pivoted
+# so each subject has one row with baseline values for every lab parameter
+# in a standard chemistry + hematology panel.
+#
+# Construction: MIP base=8 with (p, c) = (0.5, 0.25), Hadamard k=4
+# (three Sylvester doublings) → n=64 subjects. 63 per-column queries +
+# 1 all-records = 64 queries. Each query aggregates p·n = 32 subjects.
+#
+# Sensitive column (not released): aval — analysis value of the target
+# parameter (paramcd='GLUC', fasting plasma glucose). The released
+# aggregates average `aval` over subpopulations defined by demographic,
+# lab, and treatment predicates.
+#
+# Derived columns (chg, pchg, anrind) that are direct functions of aval
+# are OMITTED from the released schema to avoid trivial leakage.
+
+name: adam_adlb
+n_records: 64
+seed: 42
+
+mip_base: 8
+hadamard_order: 4
+population_value: 0.5
+communality_value: 0.25
+log_level: WARNING
+
+sensitive_column: aval
+
+# 63 query-columns = 59 bits compressed (numerical) + 4 binary/categorical
+compression_groups:
+  # --- chemistry panel (15 baseline lab values, each 3 bits = 8 bins) ---
+  - name: base_alt          # ALT, U/L
+    columns: [column_0, column_1, column_2]
+    interval: 10
+  - name: base_ast          # AST, U/L
+    columns: [column_3, column_4, column_5]
+    interval: 10
+  - name: base_bun          # BUN, mg/dL
+    columns: [column_6, column_7, column_8]
+    interval: 5
+  - name: base_creat        # creatinine, mg/dL
+    columns: [column_9, column_10, column_11]
+    interval: 1
+  - name: base_chol         # total cholesterol, mg/dL
+    columns: [column_12, column_13, column_14]
+    interval: 30
+  - name: base_hdl          # HDL, mg/dL
+    columns: [column_15, column_16, column_17]
+    interval: 15
+  - name: base_ldl          # LDL, mg/dL
+    columns: [column_18, column_19, column_20]
+    interval: 20
+  - name: base_tg           # triglycerides, mg/dL
+    columns: [column_21, column_22, column_23]
+    interval: 25
+  # --- hematology panel (6 baseline values) ---
+  - name: base_hgb          # hemoglobin, g/dL
+    columns: [column_24, column_25, column_26]
+    interval: 2
+  - name: base_hct          # hematocrit, %
+    columns: [column_27, column_28, column_29]
+    interval: 5
+  - name: base_plt          # platelet count, 10³/µL
+    columns: [column_30, column_31, column_32]
+    interval: 50
+  - name: base_wbc          # white blood cell count, 10³/µL
+    columns: [column_33, column_34, column_35]
+    interval: 1
+  - name: base_alb          # albumin, g/dL
+    columns: [column_36, column_37, column_38]
+    interval: 1
+  - name: base_bili         # total bilirubin, mg/dL
+    columns: [column_39, column_40, column_41]
+    interval: 1
+  - name: base_alp          # alkaline phosphatase, U/L
+    columns: [column_42, column_43, column_44]
+    interval: 20
+  # --- target parameter context (target PARAMCD = glucose) ---
+  - name: base              # baseline glucose, mg/dL
+    columns: [column_45, column_46]
+    interval: 30
+  - name: age               # years
+    columns: [column_47, column_48, column_49]
+    interval: 10
+  - name: avisitn           # analysis visit number
+    columns: [column_50, column_51]
+    interval: 1
+  - name: ady               # analysis study day
+    columns: [column_52, column_53, column_54]
+    interval: 30
+  - name: anrlo             # analysis normal range lower bound, mg/dL
+    columns: [column_55, column_56]
+    interval: 20
+  - name: anrhi             # analysis normal range upper bound, mg/dL
+    columns: [column_57, column_58]
+    interval: 30
+
+binary_rename:
+  column_59:
+    name: sex
+    values: {"1": M, "0": F, "2": F, "3": F}
+  column_60:
+    name: race
+    values: {"1": WHITE, "0": BLACK, "2": ASIAN, "3": OTHER}
+  column_61:
+    name: paramcd
+    values: {"1": GLUC, "0": CHOL, "2": TG, "3": HDL}
+  column_62:
+    name: saffl              # Safety Analysis Flag
+    values: {"1": Y, "0": N, "2": N, "3": N}

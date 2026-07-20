@@ -1,0 +1,7 @@
+Schema        : hr_open_n512  (decoy-augmented, 10% reconstructable)
+  core / total : 512 / 5120
+  aux cols     : 1201
+  n_attacks    : 500
+  Anonymeter risk : 0.0000  CI [0.0000, 1.0000]
+  attack rate     : 0.9962  CI [0.0000, 0.0000]
+  control rate    : 0.9962  CI [0.0000, 0.0000]

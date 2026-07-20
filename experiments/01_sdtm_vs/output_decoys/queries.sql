@@ -1,0 +1,16 @@
+SELECT AVG(sysbp) FROM table WHERE sex = 'M';
+SELECT AVG(sysbp) FROM table WHERE race = 'WHITE';
+SELECT AVG(sysbp) FROM table WHERE vsblfl = 'Y';
+SELECT AVG(sysbp) FROM table WHERE race = 'BLACK';
+SELECT AVG(sysbp) FROM table WHERE (diabp >= 40 AND diabp < 80);
+SELECT AVG(sysbp) FROM table WHERE ((diabp >= 20 AND diabp < 40) OR (diabp >= 60 AND diabp < 80));
+SELECT AVG(sysbp) FROM table WHERE ((diabp >= 10 AND diabp < 20) OR (diabp >= 30 AND diabp < 40) OR (diabp >= 50 AND diabp < 60) OR (diabp >= 70 AND diabp < 80));
+SELECT AVG(sysbp) FROM table WHERE (pulse >= 40 AND pulse < 80);
+SELECT AVG(sysbp) FROM table WHERE ((pulse >= 20 AND pulse < 40) OR (pulse >= 60 AND pulse < 80));
+SELECT AVG(sysbp) FROM table WHERE ((pulse >= 10 AND pulse < 20) OR (pulse >= 30 AND pulse < 40) OR (pulse >= 50 AND pulse < 60) OR (pulse >= 70 AND pulse < 80));
+SELECT AVG(sysbp) FROM table WHERE (height >= 60 AND height < 120);
+SELECT AVG(sysbp) FROM table WHERE ((height >= 30 AND height < 60) OR (height >= 90 AND height < 120));
+SELECT AVG(sysbp) FROM table WHERE (weight >= 60 AND weight < 120);
+SELECT AVG(sysbp) FROM table WHERE ((weight >= 30 AND weight < 60) OR (weight >= 90 AND weight < 120));
+SELECT AVG(sysbp) FROM table WHERE (bmi >= 20 AND bmi < 40);
+SELECT AVG(sysbp) FROM table WHERE ((bmi >= 10 AND bmi < 20) OR (bmi >= 30 AND bmi < 40));

@@ -1,0 +1,9 @@
+{
+  "schema": "adam_adsl",
+  "n_core": 32,
+  "n_total": 320,
+  "decoy_fraction": 0.1,
+  "data_leakage_xgb": 0.0,
+  "identifiability": 1.0,
+  "identifiability_oc": 1.0
+}

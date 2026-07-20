@@ -1,0 +1,263 @@
+# HR Open Standards (subject-level employee profile with 2 years of
+# monthly metrics) — n=256
+#
+# Schema origin: HR Open Standards / HR-XML — the schema family used by
+# enterprise HRIS (Workday, SuccessFactors, BambooHR) and consulting
+# firms' people-analytics teams. One row per employee, columns = static
+# career & demographic fields + 24 months of per-employee KPIs.
+#
+# Construction: MIP base=8 with (p, c) = (0.5, 0.25), Hadamard k=6
+# (five Sylvester doublings) → n=256 employees. 255 per-column queries +
+# 1 all-records = 256 queries. Each query aggregates p·n = 128 employees.
+#
+# Sensitive (not released): salary — annual base salary.
+# This mirrors the paper's motivating scenario: a consulting firm
+# publishes aggregate analytics over demographics, tenure, performance,
+# and monthly billable-hours / utilization, while withholding per-
+# employee salary — yet the release uniquely determines it.
+#
+# Derived compensation fields (bonus, equity, total_comp, billing_rate)
+# are OMITTED from the released schema: they are functions of salary
+# and would leak trivially.
+
+name: hr_open_n256
+n_records: 256
+seed: 42
+
+mip_base: 8
+hadamard_order: 6
+population_value: 0.5
+communality_value: 0.25
+log_level: WARNING
+
+sensitive_column: salary
+
+# 54 + 192 + 9 = 255
+compression_groups:
+  - name: age
+    columns: [column_0, column_1, column_2]
+    interval: 10   # years, 0-80
+  - name: tenure_years
+    columns: [column_3, column_4, column_5]
+    interval: 5   # yrs at company, 0-40
+  - name: years_experience
+    columns: [column_6, column_7, column_8]
+    interval: 6   # total career yrs, 0-48
+  - name: years_in_role
+    columns: [column_9, column_10, column_11]
+    interval: 2   # yrs in current role, 0-16
+  - name: direct_reports
+    columns: [column_12, column_13, column_14]
+    interval: 3   # direct reports, 0-24
+  - name: training_hours_ytd
+    columns: [column_15, column_16, column_17]
+    interval: 10   # training hrs YTD, 0-80
+  - name: pto_balance_days
+    columns: [column_18, column_19, column_20]
+    interval: 4   # PTO balance days, 0-32
+  - name: sick_days_ytd
+    columns: [column_21, column_22, column_23]
+    interval: 2   # sick days YTD, 0-16
+  - name: overtime_hours_ytd
+    columns: [column_24, column_25, column_26]
+    interval: 30   # OT hrs YTD, 0-240
+  - name: utilization_pct_ytd
+    columns: [column_27, column_28, column_29]
+    interval: 15   # utilization %, 0-120
+  - name: commute_miles
+    columns: [column_30, column_31, column_32]
+    interval: 6   # miles, 0-48
+  - name: certifications_count
+    columns: [column_33, column_34, column_35]
+    interval: 2   # certs held, 0-16
+  - name: languages_spoken
+    columns: [column_36, column_37, column_38]
+    interval: 1   # languages, 0-8
+  - name: projects_count_ytd
+    columns: [column_39, column_40, column_41]
+    interval: 3   # projects YTD, 0-24
+  - name: publications_count
+    columns: [column_42, column_43, column_44]
+    interval: 2   # publications, 0-16
+  - name: patents_count
+    columns: [column_45, column_46, column_47]
+    interval: 1   # patents, 0-8
+  - name: engagement_score
+    columns: [column_48, column_49, column_50]
+    interval: 2   # engagement survey 0-16
+  - name: customer_sat_score
+    columns: [column_51, column_52, column_53]
+    interval: 2   # CSAT 0-16
+  - name: bill_hrs_y1m01
+    columns: [column_54, column_55, column_56, column_57]
+    interval: 15   # billable hrs in y1m01, 0-240
+  - name: bill_hrs_y1m02
+    columns: [column_58, column_59, column_60, column_61]
+    interval: 15   # billable hrs in y1m02, 0-240
+  - name: bill_hrs_y1m03
+    columns: [column_62, column_63, column_64, column_65]
+    interval: 15   # billable hrs in y1m03, 0-240
+  - name: bill_hrs_y1m04
+    columns: [column_66, column_67, column_68, column_69]
+    interval: 15   # billable hrs in y1m04, 0-240
+  - name: bill_hrs_y1m05
+    columns: [column_70, column_71, column_72, column_73]
+    interval: 15   # billable hrs in y1m05, 0-240
+  - name: bill_hrs_y1m06
+    columns: [column_74, column_75, column_76, column_77]
+    interval: 15   # billable hrs in y1m06, 0-240
+  - name: bill_hrs_y1m07
+    columns: [column_78, column_79, column_80, column_81]
+    interval: 15   # billable hrs in y1m07, 0-240
+  - name: bill_hrs_y1m08
+    columns: [column_82, column_83, column_84, column_85]
+    interval: 15   # billable hrs in y1m08, 0-240
+  - name: bill_hrs_y1m09
+    columns: [column_86, column_87, column_88, column_89]
+    interval: 15   # billable hrs in y1m09, 0-240
+  - name: bill_hrs_y1m10
+    columns: [column_90, column_91, column_92, column_93]
+    interval: 15   # billable hrs in y1m10, 0-240
+  - name: bill_hrs_y1m11
+    columns: [column_94, column_95, column_96, column_97]
+    interval: 15   # billable hrs in y1m11, 0-240
+  - name: bill_hrs_y1m12
+    columns: [column_98, column_99, column_100, column_101]
+    interval: 15   # billable hrs in y1m12, 0-240
+  - name: bill_hrs_y2m01
+    columns: [column_102, column_103, column_104, column_105]
+    interval: 15   # billable hrs in y2m01, 0-240
+  - name: bill_hrs_y2m02
+    columns: [column_106, column_107, column_108, column_109]
+    interval: 15   # billable hrs in y2m02, 0-240
+  - name: bill_hrs_y2m03
+    columns: [column_110, column_111, column_112, column_113]
+    interval: 15   # billable hrs in y2m03, 0-240
+  - name: bill_hrs_y2m04
+    columns: [column_114, column_115, column_116, column_117]
+    interval: 15   # billable hrs in y2m04, 0-240
+  - name: bill_hrs_y2m05
+    columns: [column_118, column_119, column_120, column_121]
+    interval: 15   # billable hrs in y2m05, 0-240
+  - name: bill_hrs_y2m06
+    columns: [column_122, column_123, column_124, column_125]
+    interval: 15   # billable hrs in y2m06, 0-240
+  - name: bill_hrs_y2m07
+    columns: [column_126, column_127, column_128, column_129]
+    interval: 15   # billable hrs in y2m07, 0-240
+  - name: bill_hrs_y2m08
+    columns: [column_130, column_131, column_132, column_133]
+    interval: 15   # billable hrs in y2m08, 0-240
+  - name: bill_hrs_y2m09
+    columns: [column_134, column_135, column_136, column_137]
+    interval: 15   # billable hrs in y2m09, 0-240
+  - name: bill_hrs_y2m10
+    columns: [column_138, column_139, column_140, column_141]
+    interval: 15   # billable hrs in y2m10, 0-240
+  - name: bill_hrs_y2m11
+    columns: [column_142, column_143, column_144, column_145]
+    interval: 15   # billable hrs in y2m11, 0-240
+  - name: bill_hrs_y2m12
+    columns: [column_146, column_147, column_148, column_149]
+    interval: 15   # billable hrs in y2m12, 0-240
+  - name: util_pct_y1m01
+    columns: [column_150, column_151, column_152, column_153]
+    interval: 8   # utilization % in y1m01, 0-128
+  - name: util_pct_y1m02
+    columns: [column_154, column_155, column_156, column_157]
+    interval: 8   # utilization % in y1m02, 0-128
+  - name: util_pct_y1m03
+    columns: [column_158, column_159, column_160, column_161]
+    interval: 8   # utilization % in y1m03, 0-128
+  - name: util_pct_y1m04
+    columns: [column_162, column_163, column_164, column_165]
+    interval: 8   # utilization % in y1m04, 0-128
+  - name: util_pct_y1m05
+    columns: [column_166, column_167, column_168, column_169]
+    interval: 8   # utilization % in y1m05, 0-128
+  - name: util_pct_y1m06
+    columns: [column_170, column_171, column_172, column_173]
+    interval: 8   # utilization % in y1m06, 0-128
+  - name: util_pct_y1m07
+    columns: [column_174, column_175, column_176, column_177]
+    interval: 8   # utilization % in y1m07, 0-128
+  - name: util_pct_y1m08
+    columns: [column_178, column_179, column_180, column_181]
+    interval: 8   # utilization % in y1m08, 0-128
+  - name: util_pct_y1m09
+    columns: [column_182, column_183, column_184, column_185]
+    interval: 8   # utilization % in y1m09, 0-128
+  - name: util_pct_y1m10
+    columns: [column_186, column_187, column_188, column_189]
+    interval: 8   # utilization % in y1m10, 0-128
+  - name: util_pct_y1m11
+    columns: [column_190, column_191, column_192, column_193]
+    interval: 8   # utilization % in y1m11, 0-128
+  - name: util_pct_y1m12
+    columns: [column_194, column_195, column_196, column_197]
+    interval: 8   # utilization % in y1m12, 0-128
+  - name: util_pct_y2m01
+    columns: [column_198, column_199, column_200, column_201]
+    interval: 8   # utilization % in y2m01, 0-128
+  - name: util_pct_y2m02
+    columns: [column_202, column_203, column_204, column_205]
+    interval: 8   # utilization % in y2m02, 0-128
+  - name: util_pct_y2m03
+    columns: [column_206, column_207, column_208, column_209]
+    interval: 8   # utilization % in y2m03, 0-128
+  - name: util_pct_y2m04
+    columns: [column_210, column_211, column_212, column_213]
+    interval: 8   # utilization % in y2m04, 0-128
+  - name: util_pct_y2m05
+    columns: [column_214, column_215, column_216, column_217]
+    interval: 8   # utilization % in y2m05, 0-128
+  - name: util_pct_y2m06
+    columns: [column_218, column_219, column_220, column_221]
+    interval: 8   # utilization % in y2m06, 0-128
+  - name: util_pct_y2m07
+    columns: [column_222, column_223, column_224, column_225]
+    interval: 8   # utilization % in y2m07, 0-128
+  - name: util_pct_y2m08
+    columns: [column_226, column_227, column_228, column_229]
+    interval: 8   # utilization % in y2m08, 0-128
+  - name: util_pct_y2m09
+    columns: [column_230, column_231, column_232, column_233]
+    interval: 8   # utilization % in y2m09, 0-128
+  - name: util_pct_y2m10
+    columns: [column_234, column_235, column_236, column_237]
+    interval: 8   # utilization % in y2m10, 0-128
+  - name: util_pct_y2m11
+    columns: [column_238, column_239, column_240, column_241]
+    interval: 8   # utilization % in y2m11, 0-128
+  - name: util_pct_y2m12
+    columns: [column_242, column_243, column_244, column_245]
+    interval: 8   # utilization % in y2m12, 0-128
+
+binary_rename:
+  column_246:
+    name: sex
+    values: {"1": M, "0": F, "2": F, "3": F}
+  column_247:
+    name: department
+    values: {"1": CONSULTING, "0": SALES, "2": ENGINEERING, "3": OPERATIONS}
+  column_248:
+    name: employment_type
+    values: {"1": FULLTIME, "0": PARTTIME, "2": CONTRACTOR, "3": INTERN}
+  column_249:
+    name: education_level
+    values: {"1": PHD, "0": BS, "2": MS, "3": HS}
+  column_250:
+    name: country
+    values: {"1": USA, "0": DEU, "2": GBR, "3": IND}
+  column_251:
+    name: remote_flag
+    values: {"1": Y, "0": N, "2": N, "3": N}
+  column_252:
+    name: union_member
+    values: {"1": Y, "0": N, "2": N, "3": N}
+  column_253:
+    name: equity_eligible
+    values: {"1": Y, "0": N, "2": NA, "3": UNK}
+  column_254:
+    name: benefits_tier
+    values: {"1": PREMIUM, "0": STANDARD, "2": STANDARD, "3": BASIC}

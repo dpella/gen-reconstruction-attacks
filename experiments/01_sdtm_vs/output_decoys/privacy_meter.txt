@@ -1,0 +1,8 @@
+Schema                : sdtm_vs  (decoy-augmented, 10% reconstructable)
+  core / total         : 16 / 160
+  features             : 40
+  mean relative error  : 446.89%
+  mean absolute error  : 11548.67
+  RMSE                 : 13555.28
+  R²                   : 0.8170
+  attack success (±5%) : 12.50% of core

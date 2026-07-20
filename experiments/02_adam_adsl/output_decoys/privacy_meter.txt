@@ -1,0 +1,8 @@
+Schema                : adam_adsl  (decoy-augmented, 10% reconstructable)
+  core / total         : 32 / 320
+  features             : 80
+  mean relative error  : 76.60%
+  mean absolute error  : 9571.46
+  RMSE                 : 11678.01
+  R²                   : 0.8278
+  attack success (±5%) : 15.62% of core

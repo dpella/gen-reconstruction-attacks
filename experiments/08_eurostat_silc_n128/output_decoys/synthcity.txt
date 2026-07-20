@@ -1,0 +1,4 @@
+Schema           : eurostat_silc_n128  (decoy-augmented, 10% reconstructable)
+  core / total    : 128 / 1280
+  DataLeakageXGB  : 0.0000
+  Identifiability : 1.0000  (one-class: 1.0000)

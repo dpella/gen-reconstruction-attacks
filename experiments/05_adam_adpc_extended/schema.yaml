@@ -1,0 +1,300 @@
+# ADaM ADPC (extended: parent + metabolite, two-period crossover) — n=256
+#
+# Schema origin: CDISC ADaM Pharmacokinetic Concentrations dataset in its
+# standard bioequivalence/bioavailability configuration: one row per subject,
+# columns = PK concentrations of (parent drug + principal metabolite) at
+# 20 nominal timepoints across two study periods (single-dose and
+# steady-state). This is a routine FDA/EMA submission layout.
+#
+# Construction: MIP base=8 with (p, c) = (0.5, 0.25), Hadamard k=6
+# (five Sylvester doublings) → n=256 subjects. 255 per-column queries +
+# 1 all-records = 256 queries. Each query aggregates p·n = 128 subjects.
+#
+# Sensitive (not released): conc_24h — 24-hour post-dose PARENT-drug
+# concentration in period 1. Clinically sensitive trough / CYP-phenotype
+# proxy; not derivable from metabolite concentrations without the
+# subject's (unknown) metabolic ratio.
+
+name: adam_adpc_extended
+n_records: 256
+seed: 42
+
+mip_base: 8
+hadamard_order: 6
+population_value: 0.5
+communality_value: 0.25
+log_level: WARNING
+
+sensitive_column: conc_24h
+
+# 79 × 3 + 15 + 3 = 255
+compression_groups:
+  - name: pc1_0h
+    columns: [column_0, column_1, column_2]
+    interval: 50   # parent, ng/mL, p1 t=0h
+  - name: pc1_0_25h
+    columns: [column_3, column_4, column_5]
+    interval: 50   # parent, ng/mL, p1 t=0.25h
+  - name: pc1_0_5h
+    columns: [column_6, column_7, column_8]
+    interval: 50   # parent, ng/mL, p1 t=0.5h
+  - name: pc1_1h
+    columns: [column_9, column_10, column_11]
+    interval: 50   # parent, ng/mL, p1 t=1h
+  - name: pc1_1_5h
+    columns: [column_12, column_13, column_14]
+    interval: 50   # parent, ng/mL, p1 t=1.5h
+  - name: pc1_2h
+    columns: [column_15, column_16, column_17]
+    interval: 50   # parent, ng/mL, p1 t=2h
+  - name: pc1_3h
+    columns: [column_18, column_19, column_20]
+    interval: 50   # parent, ng/mL, p1 t=3h
+  - name: pc1_4h
+    columns: [column_21, column_22, column_23]
+    interval: 50   # parent, ng/mL, p1 t=4h
+  - name: pc1_6h
+    columns: [column_24, column_25, column_26]
+    interval: 50   # parent, ng/mL, p1 t=6h
+  - name: pc1_8h
+    columns: [column_27, column_28, column_29]
+    interval: 50   # parent, ng/mL, p1 t=8h
+  - name: pc1_12h
+    columns: [column_30, column_31, column_32]
+    interval: 50   # parent, ng/mL, p1 t=12h
+  - name: pc1_16h
+    columns: [column_33, column_34, column_35]
+    interval: 50   # parent, ng/mL, p1 t=16h
+  - name: pc1_36h
+    columns: [column_36, column_37, column_38]
+    interval: 50   # parent, ng/mL, p1 t=36h
+  - name: pc1_48h
+    columns: [column_39, column_40, column_41]
+    interval: 50   # parent, ng/mL, p1 t=48h
+  - name: pc1_72h
+    columns: [column_42, column_43, column_44]
+    interval: 50   # parent, ng/mL, p1 t=72h
+  - name: pc1_96h
+    columns: [column_45, column_46, column_47]
+    interval: 50   # parent, ng/mL, p1 t=96h
+  - name: pc1_120h
+    columns: [column_48, column_49, column_50]
+    interval: 50   # parent, ng/mL, p1 t=120h
+  - name: pc1_144h
+    columns: [column_51, column_52, column_53]
+    interval: 50   # parent, ng/mL, p1 t=144h
+  - name: pc1_168h
+    columns: [column_54, column_55, column_56]
+    interval: 50   # parent, ng/mL, p1 t=168h
+  - name: pc2_0h
+    columns: [column_57, column_58, column_59]
+    interval: 50   # parent, ng/mL, p2 t=0h
+  - name: pc2_0_25h
+    columns: [column_60, column_61, column_62]
+    interval: 50   # parent, ng/mL, p2 t=0.25h
+  - name: pc2_0_5h
+    columns: [column_63, column_64, column_65]
+    interval: 50   # parent, ng/mL, p2 t=0.5h
+  - name: pc2_1h
+    columns: [column_66, column_67, column_68]
+    interval: 50   # parent, ng/mL, p2 t=1h
+  - name: pc2_1_5h
+    columns: [column_69, column_70, column_71]
+    interval: 50   # parent, ng/mL, p2 t=1.5h
+  - name: pc2_2h
+    columns: [column_72, column_73, column_74]
+    interval: 50   # parent, ng/mL, p2 t=2h
+  - name: pc2_3h
+    columns: [column_75, column_76, column_77]
+    interval: 50   # parent, ng/mL, p2 t=3h
+  - name: pc2_4h
+    columns: [column_78, column_79, column_80]
+    interval: 50   # parent, ng/mL, p2 t=4h
+  - name: pc2_6h
+    columns: [column_81, column_82, column_83]
+    interval: 50   # parent, ng/mL, p2 t=6h
+  - name: pc2_8h
+    columns: [column_84, column_85, column_86]
+    interval: 50   # parent, ng/mL, p2 t=8h
+  - name: pc2_12h
+    columns: [column_87, column_88, column_89]
+    interval: 50   # parent, ng/mL, p2 t=12h
+  - name: pc2_16h
+    columns: [column_90, column_91, column_92]
+    interval: 50   # parent, ng/mL, p2 t=16h
+  - name: pc2_24h
+    columns: [column_93, column_94, column_95]
+    interval: 50   # parent, ng/mL, p2 t=24h
+  - name: pc2_36h
+    columns: [column_96, column_97, column_98]
+    interval: 50   # parent, ng/mL, p2 t=36h
+  - name: pc2_48h
+    columns: [column_99, column_100, column_101]
+    interval: 50   # parent, ng/mL, p2 t=48h
+  - name: pc2_72h
+    columns: [column_102, column_103, column_104]
+    interval: 50   # parent, ng/mL, p2 t=72h
+  - name: pc2_96h
+    columns: [column_105, column_106, column_107]
+    interval: 50   # parent, ng/mL, p2 t=96h
+  - name: pc2_120h
+    columns: [column_108, column_109, column_110]
+    interval: 50   # parent, ng/mL, p2 t=120h
+  - name: pc2_144h
+    columns: [column_111, column_112, column_113]
+    interval: 50   # parent, ng/mL, p2 t=144h
+  - name: pc2_168h
+    columns: [column_114, column_115, column_116]
+    interval: 50   # parent, ng/mL, p2 t=168h
+  - name: mc1_0h
+    columns: [column_117, column_118, column_119]
+    interval: 25   # metab, ng/mL, p1 t=0h
+  - name: mc1_0_25h
+    columns: [column_120, column_121, column_122]
+    interval: 25   # metab, ng/mL, p1 t=0.25h
+  - name: mc1_0_5h
+    columns: [column_123, column_124, column_125]
+    interval: 25   # metab, ng/mL, p1 t=0.5h
+  - name: mc1_1h
+    columns: [column_126, column_127, column_128]
+    interval: 25   # metab, ng/mL, p1 t=1h
+  - name: mc1_1_5h
+    columns: [column_129, column_130, column_131]
+    interval: 25   # metab, ng/mL, p1 t=1.5h
+  - name: mc1_2h
+    columns: [column_132, column_133, column_134]
+    interval: 25   # metab, ng/mL, p1 t=2h
+  - name: mc1_3h
+    columns: [column_135, column_136, column_137]
+    interval: 25   # metab, ng/mL, p1 t=3h
+  - name: mc1_4h
+    columns: [column_138, column_139, column_140]
+    interval: 25   # metab, ng/mL, p1 t=4h
+  - name: mc1_6h
+    columns: [column_141, column_142, column_143]
+    interval: 25   # metab, ng/mL, p1 t=6h
+  - name: mc1_8h
+    columns: [column_144, column_145, column_146]
+    interval: 25   # metab, ng/mL, p1 t=8h
+  - name: mc1_12h
+    columns: [column_147, column_148, column_149]
+    interval: 25   # metab, ng/mL, p1 t=12h
+  - name: mc1_16h
+    columns: [column_150, column_151, column_152]
+    interval: 25   # metab, ng/mL, p1 t=16h
+  - name: mc1_24h
+    columns: [column_153, column_154, column_155]
+    interval: 25   # metab, ng/mL, p1 t=24h
+  - name: mc1_36h
+    columns: [column_156, column_157, column_158]
+    interval: 25   # metab, ng/mL, p1 t=36h
+  - name: mc1_48h
+    columns: [column_159, column_160, column_161]
+    interval: 25   # metab, ng/mL, p1 t=48h
+  - name: mc1_72h
+    columns: [column_162, column_163, column_164]
+    interval: 25   # metab, ng/mL, p1 t=72h
+  - name: mc1_96h
+    columns: [column_165, column_166, column_167]
+    interval: 25   # metab, ng/mL, p1 t=96h
+  - name: mc1_120h
+    columns: [column_168, column_169, column_170]
+    interval: 25   # metab, ng/mL, p1 t=120h
+  - name: mc1_144h
+    columns: [column_171, column_172, column_173]
+    interval: 25   # metab, ng/mL, p1 t=144h
+  - name: mc1_168h
+    columns: [column_174, column_175, column_176]
+    interval: 25   # metab, ng/mL, p1 t=168h
+  - name: mc2_0h
+    columns: [column_177, column_178, column_179]
+    interval: 25   # metab, ng/mL, p2 t=0h
+  - name: mc2_0_25h
+    columns: [column_180, column_181, column_182]
+    interval: 25   # metab, ng/mL, p2 t=0.25h
+  - name: mc2_0_5h
+    columns: [column_183, column_184, column_185]
+    interval: 25   # metab, ng/mL, p2 t=0.5h
+  - name: mc2_1h
+    columns: [column_186, column_187, column_188]
+    interval: 25   # metab, ng/mL, p2 t=1h
+  - name: mc2_1_5h
+    columns: [column_189, column_190, column_191]
+    interval: 25   # metab, ng/mL, p2 t=1.5h
+  - name: mc2_2h
+    columns: [column_192, column_193, column_194]
+    interval: 25   # metab, ng/mL, p2 t=2h
+  - name: mc2_3h
+    columns: [column_195, column_196, column_197]
+    interval: 25   # metab, ng/mL, p2 t=3h
+  - name: mc2_4h
+    columns: [column_198, column_199, column_200]
+    interval: 25   # metab, ng/mL, p2 t=4h
+  - name: mc2_6h
+    columns: [column_201, column_202, column_203]
+    interval: 25   # metab, ng/mL, p2 t=6h
+  - name: mc2_8h
+    columns: [column_204, column_205, column_206]
+    interval: 25   # metab, ng/mL, p2 t=8h
+  - name: mc2_12h
+    columns: [column_207, column_208, column_209]
+    interval: 25   # metab, ng/mL, p2 t=12h
+  - name: mc2_16h
+    columns: [column_210, column_211, column_212]
+    interval: 25   # metab, ng/mL, p2 t=16h
+  - name: mc2_24h
+    columns: [column_213, column_214, column_215]
+    interval: 25   # metab, ng/mL, p2 t=24h
+  - name: mc2_36h
+    columns: [column_216, column_217, column_218]
+    interval: 25   # metab, ng/mL, p2 t=36h
+  - name: mc2_48h
+    columns: [column_219, column_220, column_221]
+    interval: 25   # metab, ng/mL, p2 t=48h
+  - name: mc2_72h
+    columns: [column_222, column_223, column_224]
+    interval: 25   # metab, ng/mL, p2 t=72h
+  - name: mc2_96h
+    columns: [column_225, column_226, column_227]
+    interval: 25   # metab, ng/mL, p2 t=96h
+  - name: mc2_120h
+    columns: [column_228, column_229, column_230]
+    interval: 25   # metab, ng/mL, p2 t=120h
+  - name: mc2_144h
+    columns: [column_231, column_232, column_233]
+    interval: 25   # metab, ng/mL, p2 t=144h
+  - name: mc2_168h
+    columns: [column_234, column_235, column_236]
+    interval: 25   # metab, ng/mL, p2 t=168h
+  - name: age
+    columns: [column_237, column_238, column_239]
+    interval: 10   # years, 0-80
+  - name: heightbl
+    columns: [column_240, column_241]
+    interval: 40   # cm,    0-160
+  - name: weightbl
+    columns: [column_242, column_243]
+    interval: 40   # kg,    0-160
+  - name: bmibl
+    columns: [column_244, column_245]
+    interval: 10   # kg/m², 0-40
+  - name: base_creat
+    columns: [column_246, column_247]
+    interval: 1   # creatinine mg/dL, 0-4
+  - name: base_alt
+    columns: [column_248, column_249]
+    interval: 20   # ALT U/L, 0-80
+  - name: base_bili
+    columns: [column_250, column_251]
+    interval: 1   # total bilirubin mg/dL, 0-4
+
+binary_rename:
+  column_252:
+    name: sex
+    values: {"1": M, "0": F, "2": F, "3": F}
+  column_253:
+    name: race
+    values: {"1": WHITE, "0": BLACK, "2": ASIAN, "3": OTHER}
+  column_254:
+    name: country
+    values: {"1": USA, "0": DEU, "2": FRA, "3": GBR}

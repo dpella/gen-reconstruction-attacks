@@ -1,0 +1,9 @@
+{
+  "schema": "adam_adpc_extended",
+  "n_core": 256,
+  "n_total": 2560,
+  "decoy_fraction": 0.1,
+  "data_leakage_xgb": 0.058365758754863814,
+  "identifiability": 1.0,
+  "identifiability_oc": 0.0
+}

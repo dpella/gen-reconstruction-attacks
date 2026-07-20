@@ -1,0 +1,9 @@
+{
+  "schema": "adam_adlb",
+  "n_core": 64,
+  "n_total": 640,
+  "decoy_fraction": 0.1,
+  "data_leakage_xgb": 0.015384615384615385,
+  "identifiability": 1.0,
+  "identifiability_oc": 0.125
+}

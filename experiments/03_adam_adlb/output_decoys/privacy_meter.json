@@ -1,0 +1,12 @@
+{
+  "schema": "adam_adlb",
+  "n_core": 64,
+  "n_total": 640,
+  "decoy_fraction": 0.1,
+  "n_features": 153,
+  "mean_abs_error": 9478.409638340228,
+  "mean_rel_error": 0.4489764557102977,
+  "rmse": 11243.049852653587,
+  "r2": 0.8258467904040517,
+  "attack_success_5pct": 0.171875
+}
