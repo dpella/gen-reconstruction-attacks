@@ -1,98 +1,143 @@
-# attack-smt
-Generating Aggregate Analytics Susceptible to De-anonymization
+# generator-reconstruction-attacks
 
-# Requirements
-First we need to install the `glpk-utils` package, which provides the tools for solving linear programming problems:
+Companion code for the paper _"Schema-Driven Generation of Reconstructable
+Datasets from Aggregate Releases"_.
+
+Given only a table schema, this tool automatically produces a **concrete
+witness** — a synthetic table together with a typical-looking aggregate
+workload — under which the sensitive column can be uniquely reconstructed.
+The construction operationalises the classical Dinur–Nissim reconstruction
+result at the level of an arbitrary input schema, making the theoretical
+risk concrete on data an organisation can recognise as its own.
+
+## Contents
+
+- `src/` — generator core: MIP-guided construction, soundness invariants
+  on query size and pairwise overlap, Hadamard/Sylvester specialisation
+  at `(p = 1/2, c = 1/4)`, column compression, decoy embedding.
+- `main.py` — command-line entry point.
+- `experiments/` — reproduction runners and results across nine schemas
+  drawn from three industry standards (CDISC SDTM/ADaM, HR Open, SDMX).
+- `examples/` — sample fully- and partially-reconstructable datasets.
+
+## Requirements
+
+The tool relies on the GLPK linear-programming solver:
+
 ```bash
 apt install glpk-utils
 ```
 
-Then we need to install the required Python packages:
+Python dependencies:
+
 ```bash
 pip install -r requirements.txt
 ```
 
-## Docker Container
-Alternatively, you can run the project in a Docker container. The [Dockerfile](Dockerfile) is provided in the root directory of the project. To build the Docker image, run:
+Alternatively, use the provided [Dockerfile](Dockerfile):
+
 ```bash
-chmod +x Dockerfile
+chmod +x setup.sh
 ./setup.sh
 ```
 
-This will build the Docker image and install all the required dependencies. Also, it will run the container in interactive mode, allowing you to run the project inside the container.
+or open the project in VS Code with the supplied
+[`.devcontainer/`](.devcontainer/) configuration.
 
-# Usage
+## Usage
 
-## Main Tool: Generating Vulnerable Datasets
-
-The main tool (`main.py`) generates datasets with aggregate analytics that are susceptible to de-anonymization attacks.
-
-### Command Syntax
 ```bash
 python main.py --number-of-records NUMBER_OF_RECORDS [OPTIONS]
 ```
 
-### Required Arguments
-- `--number-of-records NUMBER_OF_RECORDS` - Number of records to generate in the table
+### Required arguments
 
-### Optional Arguments
+- `--number-of-records N` — number of records to generate in the table.
 
-#### Table Generation Parameters
-- `--population-value FLOAT` - Population value for table generation (default: 0.5)
-  Controls how many rows each query involves
-- `--communality-value FLOAT` - Communality value for table generation (default: 0.25)
-  Controls the overlap/relation between queries
-- `--titles [TITLES ...]` - List of initial column titles
-- `--new-titles [NEW_TITLES ...]` - List of new titles to add to the table
-- `--sensitive-column SENSITIVE_COLUMN` - Name of the sensitive column (default: depends on dataset)
-- `--seed SEED` - Seed for random number generation (for reproducibility)
-- `--number-of-decoys INT` - Number of decoy rows to add to the table (default: 0)
+### Optional arguments
 
-#### Hadamard Construction
-- `--hadamard-order INT` - Construct a Hadamard matrix of specified order
+#### Table generation parameters
+- `--population-value FLOAT` — fraction `p` of records each query
+  involves (default: `0.5`).
+- `--communality-value FLOAT` — fraction `c` of records any two queries
+  share (default: `0.25`).
+- `--titles [TITLES ...]` — initial column titles.
+- `--new-titles [NEW_TITLES ...]` — additional column titles to add.
+- `--sensitive-column NAME` — name of the sensitive column (default
+  depends on dataset).
+- `--seed INT` — RNG seed for reproducibility.
+- `--number-of-decoys INT` — number of decoy rows to embed (default: `0`).
 
-#### Column Compression
-- `--columns-to-compress [COLUMNS ...]` - List of columns to compress (can be used multiple times)
-- `--compressed-title TITLE` - Title for the compressed column (default: "column_compressed")
-- `--interval-length LENGTH` - Length of the interval for compression
-- `--start-date START_DATE` - Start date for date-based compression (format: YYYY-MM-DD)
+#### Hadamard construction
+- `--hadamard-order INT` — construct a Hadamard matrix of the specified
+  order in place of MIP (available when `(p, c) = (1/2, 1/4)` and
+  `n` is a multiple of 4).
+
+#### Column compression
+- `--columns-to-compress [COLUMNS ...]` — list of columns to compress
+  (repeatable).
+- `--compressed-title TITLE` — output title for the compressed column
+  (default: `column_compressed`).
+- `--interval-length LENGTH` — interval length for numeric compression.
+- `--start-date YYYY-MM-DD` — anchor date for date-based compression.
 
 #### Logging
-- `--level LEVEL` - Set the logging level (DEBUG, INFO, CREATION) (default: INFO)
-- `--log-file LOG_FILE` - Path to the log file where logs will be saved
+- `--level LEVEL` — logging level (`DEBUG`, `INFO`, `CREATION`; default
+  `INFO`).
+- `--log-file PATH` — path to a log file.
 
-### Basic Examples
+### Examples
 
-#### Example 1: Simple table with 8 records
+Generate a small reconstructable table with the default parameters:
+
 ```bash
 python main.py --number-of-records 8
 ```
 
-#### Example 2: Table with specific population and communality values
-Generate a table of size 16 where each query has 10 rows involved and the relation between queries is 6:
+Generate a table of size 16 with non-default `(p, c)`:
+
 ```bash
-python main.py --number-of-records 16 --level creation --population-value 0.625 --communality-value 0.375
+python main.py --number-of-records 16 --level creation \
+    --population-value 0.625 --communality-value 0.375
 ```
 
-#### Example 3: Table with custom parameters
-Generate a table of size 10 where each query has 8 rows involved and the relation between queries is 7:
+Embed decoy rows for a partially-reconstructable table:
+
 ```bash
-python main.py --number-of-records 10 --population-value 0.8 --communality-value 0.7
+python main.py --number-of-records 20 --number-of-decoys 5 \
+    --population-value 0.5 --communality-value 0.25
 ```
 
-#### Example 4: Table with decoy rows
-Generate a table with decoy rows to add noise:
+Reproduce a specific run:
+
 ```bash
-python main.py --number-of-records 20 --number-of-decoys 5 --population-value 0.5 --communality-value 0.25
+python main.py --number-of-records 16 --seed 42 \
+    --population-value 0.625 --communality-value 0.375
 ```
 
-#### Example 5: Reproducible generation with seed
+## Reproducing the paper results
+
+The [`experiments/`](experiments/) directory contains everything needed
+to reproduce the results reported in the paper.
+
 ```bash
-python main.py --number-of-records 16 --seed 42 --population-value 0.625 --communality-value 0.375
+cd experiments
+./run_all.sh
 ```
 
-# Development
-For the development of this project, we created a devcontainer that contains all the necessary tools and libraries to run the project.
+Per-experiment READMEs describe individual scenarios (SDTM VS,
+ADaM ADSL/ADLB/ADPC, HR Open, SDMX / Eurostat SILC). Result CSVs and
+Markdown tables are checked in; scripts overwrite them on re-run.
 
->[!IMPORTANT]
-> To use the devcontainer, you need to have `docker` installed on your machine. Once you have `docker` installed, you can open the project in Visual Studio Code and it will prompt you to reopen the project in the devcontainer.
+Additional runners are available:
+
+- `run_privacy_metrics_all.sh` — evaluate Anonymeter, Synthcity, and
+  Privacy Meter against generated datasets.
+- `run_anonymeter_all.sh` — Anonymeter-only sweep.
+- `run_decoys_all.sh` — partially-reconstructable variants with decoy
+  embedding.
+- `benchmark.sh` — timing / scaling benchmark (Sylvester vs. MIP).
+
+## License
+
+Mozilla Public License 2.0. See [LICENSE](LICENSE).
