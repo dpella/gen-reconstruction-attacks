@@ -7,7 +7,14 @@
 #
 # Note: synthcity pulls in a substantial PyTorch/XGBoost stack — expect
 # a several-hundred-MB download.
+#
+# torch>=2.4 is required because synthcity depends on opacus, and
+# opacus>=1.5 references torch.nn.RMSNorm (added in PyTorch 2.4).
+# Without this pin, pip resolves an older torch and opacus fails at
+# import time with:
+#     AttributeError: module 'torch.nn' has no attribute 'RMSNorm'
 
+torch>=2.4
 anonymeter
 synthcity
 scikit-learn
