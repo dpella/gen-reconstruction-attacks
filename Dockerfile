@@ -1,4 +1,8 @@
-FROM python:3.12.3
+# NOTE: pinned to Python 3.11 (anonymeter and synthcity do not yet
+# support 3.12 — anonymeter's PyPI metadata declares
+# Requires-Python >=3.7,<3.12). If/when the upstream packages relax
+# that pin, bump this back to a newer Python.
+FROM python:3.11.9
 
 WORKDIR /workspace
 
