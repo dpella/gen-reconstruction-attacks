@@ -8,23 +8,19 @@
 # Note: synthcity pulls in a substantial PyTorch/XGBoost stack — expect
 # a several-hundred-MB download.
 #
-# Two related pins target the opacus / torch mismatch that synthcity
-# users see under Python 3.11:
-#
-#   * torch>=2.4 — opacus>=1.5 references torch.nn.RMSNorm, which was
-#     only added in PyTorch 2.4. Without an upgrade to 2.4+, importing
-#     opacus (a synthcity transitive dep) crashes with:
-#         AttributeError: module 'torch.nn' has no attribute 'RMSNorm'
-#
-#   * opacus<1.5 — belt-and-suspenders. Even if pip somehow resolves to
-#     an older torch, capping opacus below 1.5 avoids the RMSNorm
-#     reference entirely.
+# --- HARD PINS ---------------------------------------------------------
+# The versions below are the exact ones that gave a clean end-to-end
+# run of scripts/reproduce_privacy_metrics.sh. Soft constraints that
+# forced those choices (and would still hold if the pins are ever
+# relaxed) are documented next to each line.
 
-torch>=2.4
-opacus<1.5
-scipy<1.14        # synthcity imports scipy.integrate.trapz (removed in 1.14)
-pydantic<2        # synthcity's Schema BaseModel has non-annotated attributes (pydantic 1.x style)
-anonymeter
-synthcity
-scikit-learn
-pandas
+torch==2.13.0            # >= 2.4 required for opacus's torch.nn.RMSNorm reference
+opacus==1.4.1            # < 1.5 avoids the RMSNorm reference entirely (fallback for torch pin)
+scipy==1.13.1            # < 1.14 because synthcity imports scipy.integrate.trapz (removed in 1.14)
+pydantic==1.10.26        # v1: synthcity's Schema BaseModel has unannotated class attributes (pydantic 1.x style)
+anonymeter==1.0.0        # Requires-Python >=3.7,<3.12 (hence the Python 3.11.9 pin in Dockerfile)
+synthcity==0.2.4         # the specific release that these pins were resolved against
+scikit-learn==1.7.2
+pandas==2.3.3
+numpy==1.26.4
+xgboost==2.1.4
