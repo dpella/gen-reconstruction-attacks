@@ -11,16 +11,26 @@ Invoked from each experiment's run.sh as:
 With `--decoy-fraction F` (0 < F < 1), the pipeline implements the partially
 reconstructive construction of Section 4.2 + Theorem 3 in the paper:
 
-  1. Build the reconstructable core of size n as usual.
+  1. Build the reconstructable core of size n as usual (search -> Hadamard).
   2. Replace the final `SELECT AVG(...) FROM table;` (the all-records query
      introduced by the Hadamard expansion) with `WHERE <col> = '0'` on
      `column_{n-3}` — the unique column whose raw values in the core are
      exactly `{'0','1'}`. This is the negation of the `= '1'` query on the
-     same column.
-  3. Append (n / F − n) decoy rows whose every column is sampled from
-     `Table.no(random=True) ∈ {'2','3'}`, so no decoy matches any released
-     predicate (neither any `= '1'` query nor the new `= '0'` query).
-  4. Verification: the decoy rows contribute zero to every row of the
+     same column. Without this swap, decoys would be silently counted by
+     the unconditional all-records query, which has no WHERE clause to
+     exclude them.
+  3. Append (n / F − n) decoy rows (stock `src/decoy.py`, every column
+     sampled from `Table.no(random=True) ∈ {'2','3'}`) — *before*
+     compression runs, not after.
+  4. Only then run compression. `Compress.compress_record` treats any
+     value other than `'1'` as a "no", so a decoy's `'2'`/`'3'` values walk
+     the same branch as an all-zero record and land in the one range
+     bucket (`[0, 1)` after full halving) that the generated range queries
+     structurally never test (their check-sets only cover the odd-indexed
+     dyadic sub-intervals, i.e. "this bit is 1" tests). No decoy ever
+     satisfies a compressed range query, so a plain string sentinel is
+     enough — no numeric `-1.0` fill needed for post-compression columns.
+  5. Verification: the decoy rows contribute zero to every row of the
      released matrix, so `b` is identical to the pre-decoy case. Solve
      `M[:, :n] · s = b` and compare with the first n ground-truth values.
 """
@@ -40,6 +50,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO_ROOT))
 
 from src.compress import Compress
+from src.decoy import Decoy
 from src.hadamard import Hadamard
 from src.logger import Logger, Level
 from src.matrix import Matrix
@@ -47,28 +58,6 @@ from src.search.search import Search
 from src.table.condition import EQ
 from src.table.query import IQuery, SelectQuery, SelectWhereQuery
 from src.table.table import Table
-
-
-def _add_decoys(table: Table, n_decoys: int) -> None:
-    """Append decoys whose every field lies outside every released predicate.
-
-    The stock `src/decoy.py` only produces string decoys, which breaks on
-    numerical columns introduced by compression. Here we pick a type-aware
-    fill: random `'2'`/`'3'` for string columns (categorical/binary) and
-    `-1.0` for numerical columns (outside every compression range, which
-    starts at 0). The result: every compression range query and every
-    categorical `= '<val>'` query evaluates to False on every decoy row.
-    """
-    for _ in range(n_decoys):
-        row: List[object] = []
-        for t in table.titles:
-            col = table[t]
-            sample = col[0] if len(col) else ""
-            if isinstance(sample, (int, float)) and not isinstance(sample, bool):
-                row.append(-1.0)
-            else:
-                row.append(Table.no(True))
-        table.add_row(row)
 
 
 def _binary_column_name(cfg: dict) -> str:
@@ -122,26 +111,17 @@ def run_pipeline(cfg: dict, decoy_fraction: float = 0.0) -> Tuple[Table, List[IQ
             matrix, hadamard_order, titles=[]
         )
 
-    for i, group in enumerate(cfg.get("compression_groups", [])):
-        compress = (
-            Compress(new_table)
-            .set_columns_to_compress(group["columns"])
-            .set_column_title(f"__comp_{i}")
-            .set_interval_length(group["interval"])
-        )
-        new_table, queries = compress.compress(queries)
-
     n_core = new_table.shape[0]
 
     if decoy_fraction > 0:
-        # Replace the all-records SelectQuery (inserted by Hadamard between
-        # the uncompressed WHERE queries and the range queries appended by
-        # compression) with the negation of the `= '1'` query on the
-        # binary column.
+        # Replace the all-records SelectQuery (inserted by Hadamard) with the
+        # negation of the `= '1'` query on the binary column, *before* adding
+        # decoys — otherwise the unconditional all-records query would count
+        # the decoy rows too, since it has no WHERE clause to exclude them.
         bin_col = _binary_column_name(cfg)
         if bin_col not in new_table.titles:
             raise ValueError(
-                f"Expected binary column {bin_col} to survive compression; "
+                f"Expected binary column {bin_col} in the pre-compression table; "
                 "check the schema's binary_rename / compression_groups."
             )
         idxs = [
@@ -156,8 +136,20 @@ def run_pipeline(cfg: dict, decoy_fraction: float = 0.0) -> Tuple[Table, List[IQ
         negation = SelectWhereQuery(sensitive, bin_col, EQ(bin_col, Table.no(False)))
         queries = queries[:idxs[0]] + [negation] + queries[idxs[0] + 1:]
 
+        # Stock decoy generator: every column gets a string '2'/'3' sentinel.
+        # Safe to run before compression — see module docstring step 4 for
+        # why compression can't turn a decoy into a false match.
         n_decoys = _decoy_count(n_core, decoy_fraction)
-        _add_decoys(new_table, n_decoys)
+        new_table, queries = Decoy(n_decoys).generate_decoy_table(new_table, queries)
+
+    for i, group in enumerate(cfg.get("compression_groups", [])):
+        compress = (
+            Compress(new_table)
+            .set_columns_to_compress(group["columns"])
+            .set_column_title(f"__comp_{i}")
+            .set_interval_length(group["interval"])
+        )
+        new_table, queries = compress.compress(queries)
 
     return new_table, queries, n_core
 
