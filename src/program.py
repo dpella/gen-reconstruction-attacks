@@ -4,6 +4,8 @@ from typing import List, Optional
 from src.common import Range
 from src.logger import Logger, Level
 from src.table.table import Table
+from src.table.condition import EQ
+from src.table.query import IQuery, SelectQuery, SelectWhereQuery
 from src.search.search import Search
 from src.compress import Compress
 from src.matrix import Matrix
@@ -81,6 +83,48 @@ class Program:
         self.__number_of_decoys = number_of_decoys
         return self
 
+    def __exclude_decoys_from_catchall_query(
+        self, queries: List[IQuery], binary_column_name: Optional[str]
+    ) -> List[IQuery]:
+        """
+        The Hadamard expansion appends one unconditional `SELECT AVG(...)
+        FROM table;` query with no WHERE clause, so it has no predicate to
+        exclude decoy rows from — every decoy would be silently counted by
+        it. Replace it with the negation (`= '0'`) of the `= '1'` query on
+        the one column whose real values are exactly '0'/'1' (see
+        `Hadamard.binary_column_name`); together the `= '1'` and `= '0'`
+        queries partition the reconstructable rows exactly like the
+        original catch-all query did, but both have a WHERE clause a decoy
+        row can't satisfy.
+
+        No-op if there is no catch-all query to replace (e.g. no Hadamard
+        expansion was used).
+        """
+        catchall_indices = [
+            i
+            for i, q in enumerate(queries)
+            if isinstance(q, SelectQuery) and not isinstance(q, SelectWhereQuery)
+        ]
+        if not catchall_indices:
+            return queries
+
+        if len(catchall_indices) != 1 or binary_column_name is None:
+            raise ValueError(
+                "Cannot safely add decoys: expected exactly one catch-all "
+                "all-records query together with a known binary column to "
+                "negate it with, but found "
+                f"{len(catchall_indices)} catch-all queries and "
+                f"binary_column_name={binary_column_name!r}."
+            )
+
+        index = catchall_indices[0]
+        negation = SelectWhereQuery(
+            self.__sensitive_column or Table.SENSITIVE_COL_NAME,
+            binary_column_name,
+            EQ(binary_column_name, Table.no(False)),
+        )
+        return queries[:index] + [negation] + queries[index + 1 :]
+
     def run(self) -> None:
         if self.__number_of_records is None:
             raise ValueError("The number of records must be set.")
@@ -103,14 +147,19 @@ class Program:
         )
         new_table, queries = search.generate_fullrank_table(table)
 
+        binary_column_name: Optional[str] = None
         if self.__hadamard_order:
             hadamard = Hadamard(self.__logger, self.__seed_value)
             matrix = Matrix.from_queries(new_table, queries[:-1])
             new_table, queries = hadamard.generate_new_table(
                 matrix, self.__hadamard_order, self.__new_titles
             )
+            binary_column_name = hadamard.binary_column_name
 
         if self.__number_of_decoys and self.__number_of_decoys > 0:
+            queries = self.__exclude_decoys_from_catchall_query(
+                queries, binary_column_name
+            )
             decoy = Decoy(self.__number_of_decoys)
             new_table, queries = decoy.generate_decoy_table(new_table, queries)
 

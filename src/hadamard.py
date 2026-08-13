@@ -15,6 +15,7 @@ class Hadamard:
         self.__logger = logger
         self._sensitive_column_name = Table.SENSITIVE_COL_NAME
         self.__seed = seed
+        self.binary_column_name: Optional[str] = None
 
     def set_sensitive_column_name(self, name: str) -> "Hadamard":
         self._sensitive_column_name = name
@@ -57,9 +58,19 @@ class Hadamard:
                 table.sensitive_column_name, new_title, EQ(new_title, Table.yes())
             )
 
+            # At this one iteration, "no" answers are the literal '0' rather
+            # than a randomized '2'/'3' — every value in this column is
+            # exactly '0' or '1'. That makes it the only column whose
+            # `= '0'` query is the true negation of its `= '1'` query,
+            # needed to safely rewrite the catch-all all-records query below
+            # when decoys are added (see Program.run / Decoy).
+            is_deterministic = i + 1 == n - 1
+            if is_deterministic:
+                self.binary_column_name = new_title
+
             table.add_column(
                 new_title,
-                [Table.yes() if j else Table.no(i + 1 != n - 1) for j in row],
+                [Table.yes() if j else Table.no(not is_deterministic) for j in row],
             )
             queries += [query]
 
