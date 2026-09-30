@@ -1,7 +1,8 @@
 # generator-reconstruction-attacks
 
 Companion code for the paper _"Schema-Driven Generation of Reconstructable
-Datasets from Aggregate Releases"_.
+Datasets from Aggregate Releases"_, to appear at
+[NordSec 2026](https://nordsec2026.dk/).
 
 Given only a table schema, this tool automatically produces a **concrete
 witness** — a synthetic table together with a typical-looking aggregate
@@ -19,6 +20,10 @@ risk concrete on data an organisation can recognise as its own.
 - `experiments/` — reproduction runners and results across nine schemas
   drawn from three industry standards (CDISC SDTM/ADaM, HR Open, SDMX).
 - `examples/` — sample fully- and partially-reconstructable datasets.
+- `webapp/` — public showcase site: a plain-language explanation of the
+  risk, an interactive walkthrough, and downloadable reconstructable
+  datasets in CDISC ADaM, OMOP and Swedish register formats. See
+  [`webapp/README.md`](webapp/README.md).
 
 ## Getting started
 
