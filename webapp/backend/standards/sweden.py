@@ -120,8 +120,9 @@ RIKSHIA = SchemaTemplate(
         "reperfusion, complications and discharge medication."
     ),
     story=(
-        "Hospital comparisons report the average peak troponin — a measure of how much "
-        "heart muscle was lost — for patient groups defined by risk factors, admission "
+        "Suppose a RIKS-HIA extract is shared without peak troponin, while hospital "
+        "comparisons report the average peak troponin — a measure of how much heart "
+        "muscle was lost — for patient groups defined by risk factors, admission "
         "findings, treatment and discharge medication."
     ),
     sensitive=Sensitive("Maxvärde_markör", 20, 20000, "ng/L",
@@ -203,9 +204,9 @@ NDR = SchemaTemplate(
         "computed as NDR does."
     ),
     story=(
-        "NDR-style reports show the average HbA1c per region and patient group — by "
-        "blood-pressure band, lipids, kidney function, treatment and lifestyle — to "
-        "compare the quality of diabetes care."
+        "Suppose an NDR extract is shared without HbA1c, while NDR-style reports show "
+        "the average HbA1c per region and patient group: by blood-pressure band, "
+        "lipids, kidney function, treatment and lifestyle."
     ),
     sensitive=Sensitive("R_HbA1c", 31, 108, "mmol/mol", "HbA1c (mmol/mol) — glycaemic control"),
     static=[
@@ -299,9 +300,10 @@ LISA = SchemaTemplate(
         "education, employment, incomes and social-insurance benefits."
     ),
     story=(
-        "A register study publishes the average number of sickness-benefit days for "
+        "Suppose a LISA extract is shared without sickness-benefit days, while "
+        "register statistics publish the average number of sickness-benefit days for "
         "groups defined by income bands, unemployment, parental leave, education, "
-        "region and sex — the standard breakdowns of Swedish register statistics."
+        "region and sex."
     ),
     sensitive=Sensitive("SjukP_Ndag_MiDAS", 0, 365, "nettodagar",
                         "Sjukpenning, antal nettodagar (MiDAS) — days on sick leave"),

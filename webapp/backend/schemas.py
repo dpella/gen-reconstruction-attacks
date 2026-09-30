@@ -275,33 +275,26 @@ CATEGORIES = {
         "title": "Pharma",
         "standard": "CDISC ADaM",
         "description": (
-            "Clinical-trial analysis data in CDISC ADaM, the format submitted to EMA "
-            "and FDA. ADSL is the standard one-row-per-subject dataset behind every "
-            "study report's demographics and baseline tables; under the EU Clinical "
-            "Trials Regulation (536/2014), trial results are published in CTIS."
+            "Clinical-trial analysis data in CDISC ADaM, the format submitted to "
+            "regulators such as EMA and FDA. ADSL is the standard one-row-per-subject "
+            "dataset behind a study report's demographics and baseline tables."
         ),
     },
     "healthcare": {
         "title": "Healthcare",
         "standard": "OMOP CDM · OHDSI",
         "description": (
-            "Real-world data in the OMOP common data model, as analysed in the "
-            "European networks EHDEN and DARWIN EU (EMA): a study cohort with the "
-            "standard OHDSI FeatureExtraction covariates, one row per person. "
-            "Network studies share only aggregates, typically suppressing counts "
-            "below 5, and the European Health Data Space lets anyone request answers "
-            "in 'anonymised statistical format'."
+            "Real-world data in the OMOP common data model, widely used in "
+            "observational research: a study cohort with the standard OHDSI "
+            "FeatureExtraction covariates, one row per person."
         ),
     },
     "public": {
         "title": "Public sector · Sweden",
         "standard": "Swedish national registers",
         "description": (
-            "Extracts from Sweden's national quality registers and SCB's LISA, with "
-            "their official variable names and codes. Aggregates are published "
-            "openly (Vården i siffror, register annual reports, SCB statistics), and "
-            "under the principle of public access (offentlighetsprincipen) more can "
-            "be requested."
+            "Extracts in the formats of Sweden's national quality registers and "
+            "SCB's LISA, with their official variable names and codes."
         ),
     },
 }

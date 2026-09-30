@@ -183,7 +183,7 @@ table.data td.sensitive.revealed { color: var(--ok); font-weight: 650; transitio
 
 /* Intro ("Why it matters") */
 .kicker { text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.78rem; font-weight: 650; color: var(--accent); margin: 0 0 0.5rem; }
-.intro-hero h1 { max-width: 22ch; }
+.intro-hero h1 { max-width: 30ch; }
 .chapter {
   display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 420px); gap: 2.5rem; align-items: center;
   padding: 2.5rem 0; border-top: 1px solid var(--border);
@@ -258,3 +258,5 @@ table.data th.sensitive { z-index: 2; }
   border-left: 4px solid var(--accent); background: var(--accent-soft);
   padding: 0.75rem 1rem; border-radius: 0 8px 8px 0; font-size: 1.05rem; font-weight: 550;
 }
+
+.dataset .scenario { color: var(--muted); }

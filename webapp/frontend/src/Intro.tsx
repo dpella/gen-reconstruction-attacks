@@ -6,11 +6,13 @@ export default function Intro() {
     <div className="intro">
       <section className="hero intro-hero">
         <p className="kicker">Health data · privacy</p>
-        <h1>“It's only averages.” Why that is no longer enough.</h1>
+        <h1>“We never released the sensitive column.” It can still be recovered exactly.</h1>
         <p className="lead">
-          Statistics about large groups of patients are published every day and are widely
-          considered safe. This page explains, in six short steps, why that belief breaks down
-          as health data becomes more connected — and shows it on realistic examples.
+          A common, well-intentioned way to share health data is to release patients' attributes
+          without names, withhold the most sensitive values, and publish averages over large
+          groups. Each step feels safe. Together, though, they carry a{" "}
+          <strong>subtle but important</strong> risk. This page explains it in six short steps
+          — and shows it on health-data schemas used in practice.
         </p>
       </section>
 
@@ -125,24 +127,30 @@ export default function Intro() {
 
       <Chapter
         num={6}
-        title="Today's safeguards don't scale"
+        title="Safeguards built for a different world"
         figure={<CombineFigure />}
       >
-        <p>
-          Today, releases are protected in two ways, and neither keeps up:
-        </p>
+        <p>Releases are usually protected in two ways, both designed for the world of step 2:</p>
         <ul className="bullets">
           <li>
-            <strong>Manual review.</strong> An expert checks each table for small groups before
-            release. It is slow, and each release is judged <em>on its own</em> — but the risk
-            lies in how it <em>combines with everything released before</em>, which no person
-            can keep track of.
+            <strong>Expert review.</strong> An experienced statistician checks each table — for
+            example, that no group is too small — before release. This works well for a handful
+            of tables. But the risk lies in how a release <em>combines with everything released
+            before</em>, and with thousands of statistics that is beyond what any person can
+            track.
           </li>
           <li>
-            <strong>Heavy anonymisation.</strong> Coarsen or remove so much that nothing could
-            leak — which often leaves data too blurry to be useful.
+            <strong>Coarsening the data.</strong> Generalising or removing attributes lowers the
+            risk, at a real cost in usefulness — so it is used sparingly.
           </li>
         </ul>
+        <p>
+          The good news: the risk can be checked <em>before</em> publishing. Our aim is to help
+          you see it on data that looks like your own, and to test the privacy metrics and
+          disclosure rules you may already be using. Every one of the{" "}
+          <a href="#datasets">datasets on this site</a> is known to leak — so a reliable metric
+          should flag it.
+        </p>
       </Chapter>
 
       <section className="closing">
