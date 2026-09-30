@@ -114,8 +114,13 @@ def run_pipeline(cfg: dict, decoy_fraction: float = 0.0) -> Tuple[Table, List[IQ
 
     n_core = new_table.shape[0]
 
-    # Pure MIP (no Hadamard expansion) emits only `= '1'` WHERE queries, which
-    # decoys never satisfy, so there is no all-records query to rewrite.
+    # Without the Hadamard expansion there may be no all-records query to
+    # rewrite. With (p, c) = (1/2, 1/4) the MIP search closes the matrix with
+    # LastNegationClosingStrategy: `<last column> = '0'` on a column whose core
+    # values are exactly '0'/'1'. Every query is then `= '1'` or that `= '0'`
+    # negation, and decoys (valued '2'/'3') satisfy neither, so they can be
+    # added directly. If the search closed with AllClosingStrategy (other
+    # (p, c)), the all-records query exists and the branch below handles it.
     has_all_records = any(
         isinstance(q, SelectQuery) and not isinstance(q, SelectWhereQuery)
         for q in queries
