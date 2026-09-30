@@ -2,3 +2,7 @@ dist-newstyle/
 __pycache__/
 logs/
 .claude/
+webapp/cache/
+webapp/frontend/node_modules/
+webapp/frontend/dist/
+webapp/frontend/tsconfig.tsbuildinfo
