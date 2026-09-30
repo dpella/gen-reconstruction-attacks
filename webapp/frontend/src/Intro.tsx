@@ -16,14 +16,18 @@ export default function Intro() {
 
       <Chapter
         num={1}
-        title="Statistics feel safe"
+        title="Statistics and de-identified data feel safe"
         figure={<CrowdFigure />}
       >
         <p>
           When a hospital or a register publishes “the average blood pressure of 2,000
           patients”, nobody's name is in it and every patient disappears into a crowd. The
-          bigger the group, the safer it feels — so publishing <strong>aggregates over many
-          people</strong> is the standard way to share health data.
+          bigger the group, the safer it feels. Sharing patients' ordinary attributes — age,
+          sex, region, treatment — without names or personnummer feels just as harmless: no
+          single column identifies anyone. And the truly sensitive values, such as lab results,
+          are simply withheld. So releasing <strong>de-identified attributes</strong>,{" "}
+          <strong>withholding the sensitive ones</strong> and publishing{" "}
+          <strong>aggregates over many people</strong> is the standard way to share health data.
         </p>
       </Chapter>
 
