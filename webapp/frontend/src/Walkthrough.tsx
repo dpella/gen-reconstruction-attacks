@@ -311,7 +311,7 @@ function Scaling(props: { result: Result; onActive: (i: number) => void; onDatas
         <div className="equation swap">
           <span className="muted small">Before doubling: add the overall average</span>
           <p>
-            Average {avg(drop)} ({s.label} where {describe(drop)}) is replaced by the overall
+            Average {avg(drop)} (<code>{s.label} where {describe(drop)}</code>) is replaced by the overall
             average of {s.label} across all patients:
           </p>
           <code>SELECT AVG({s.name}) FROM table;</code>
