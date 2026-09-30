@@ -16,7 +16,6 @@
   --secret-soft: #fdecec;
   --ok: #2f9467;
   --cell-off: #e3ecea;
-  --flip: var(--blue);
   --radius: 10px;
   color-scheme: light;
 }
@@ -118,7 +117,7 @@ a { color: var(--accent); }
 
 .queries { list-style: none; margin: 0; padding: 0; max-height: 560px; overflow: auto; }
 .queries button {
-  display: flex; flex-direction: column; gap: 0.1rem; width: 100%; text-align: left;
+  display: flex; flex-direction: row; align-items: flex-start; gap: 0.6rem; width: 100%; text-align: left;
   background: none; border: 1px solid transparent; border-radius: 8px; padding: 0.45rem 0.6rem;
   font: inherit; font-size: 0.9rem; color: inherit; cursor: pointer;
 }
@@ -126,6 +125,9 @@ a { color: var(--accent); }
 .queries button.active { background: var(--accent-soft); border-color: var(--accent); }
 .q-text code { font-size: 0.78rem; word-break: break-word; }
 .q-answer { font-weight: 600; font-variant-numeric: tabular-nums; }
+.q-body { display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; }
+.q-num { flex: none; min-width: 1.6em; text-align: right; color: var(--muted); font-size: 0.85rem; font-variant-numeric: tabular-nums; line-height: 1.55rem; }
+.queries button.active .q-num { color: var(--accent); font-weight: 650; }
 
 .table-scroll { overflow-x: auto; }
 table.data { border-collapse: collapse; font-size: 0.82rem; font-variant-numeric: tabular-nums; width: 100%; }
@@ -153,13 +155,25 @@ table.data td.sensitive.revealed { color: var(--ok); font-weight: 650; transitio
 .matrix .cell.on.active { opacity: 1; }
 .matrix.small { gap: 1px; max-width: 320px; }
 .matrix.small .cell { border-radius: 1px; cursor: default; }
-.matrix.small .cell.flipped { background: color-mix(in srgb, var(--flip) 25%, var(--cell-off)); }
-.matrix.small .cell.on.flipped { background: var(--flip); opacity: 0.8; }
+.matrix.small .cell.on.ones { background: var(--accent); opacity: 1; }
 
 .scaling { display: grid; gap: 2rem; grid-template-columns: minmax(0, 1fr) minmax(0, 320px); align-items: start; }
 @media (max-width: 760px) { .scaling { grid-template-columns: minmax(0, 1fr); } }
+.scaling p:first-child { margin-top: 0; }
+.info {
+  display: flex; gap: 0.6rem; align-items: flex-start; margin: 0 0 1rem;
+  padding: 0.6rem 0.75rem; border-radius: 8px; background: var(--accent-soft); font-weight: 550;
+}
+.info-icon { flex: none; width: 1.15rem; height: 1.15rem; margin-top: 0.15rem; color: var(--accent); }
 .doubling { margin: 0; }
 .doubling figcaption { margin-top: 0.5rem; }
+.doubling-grid { position: relative; max-width: 320px; }
+.matrix.small .cell.hovered { outline: 1px solid var(--text); }
+.grid-tip {
+  position: absolute; left: 0; right: 0; margin-top: 6px; z-index: 3; pointer-events: none;
+  padding: 0.5rem 0.65rem; border-radius: 8px; font-size: 0.8rem; line-height: 1.4;
+  background: var(--text); color: var(--bg); box-shadow: 0 4px 14px rgb(0 0 0 / 0.18);
+}
 
 /* Buttons */
 .btn, button.primary {
@@ -260,3 +274,10 @@ table.data th.sensitive { z-index: 2; }
 }
 
 .dataset .scenario { color: var(--muted); }
+
+/* "Scaling up": the original matrix found by the tool, before doubling. */
+.matrix.small .cell.original { background: color-mix(in srgb, var(--blue) 22%, var(--cell-off)); }
+.matrix.small .cell.on.original { background: var(--blue); opacity: 0.85; }
+.swatch { display: inline-block; width: 0.7em; height: 0.7em; border-radius: 2px; vertical-align: baseline; }
+.swatch.original { background: var(--blue); }
+.swatch.ones { background: var(--accent); }

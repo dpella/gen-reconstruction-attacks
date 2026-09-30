@@ -132,18 +132,21 @@ function QueryList(props: { result: Result; active: number; onActive: (i: number
       <div className="panel-title">Published averages</div>
       <ol className="queries">
         {result.queries.map((q, i) => (
-          <li key={i}>
+          <li key={i} id={`avg-${i + 1}`}>
             <button
               className={i === active ? "active" : ""}
               onClick={() => onActive(i)}
               onMouseEnter={() => onActive(i)}
             >
-              <span className="q-text">
-                {showSql ? <code>{q.sql}</code> : <>Average {s.label} where {describeQuery(q.sql, labels)}</>}
-              </span>
-              <span className="q-answer">
-                {fmt(q.answer)} <small>{s.unit}</small>
-                <small className="muted"> · {q.matched} patients</small>
+              <span className="q-num">{i + 1}</span>
+              <span className="q-body">
+                <span className="q-text">
+                  {showSql ? <code>{q.sql}</code> : <>Average {s.label} where {describeQuery(q.sql, labels)}</>}
+                </span>
+                <span className="q-answer">
+                  {fmt(q.answer)} <small>{s.unit}</small>
+                  <small className="muted"> · {q.matched} patients</small>
+                </span>
               </span>
             </button>
           </li>
@@ -263,31 +266,79 @@ function Matrix({ result, active, onActive }: { result: Result; active: number; 
 
 function Scaling({ result, onDatasets }: { result: Result; onDatasets: () => void }) {
   const M = result.matrix;
-  const doubled = useMemo(() => {
-    const flip = (r: string) => [...r].map((c) => (c === "1" ? "0" : "1")).join("");
-    return [...M.map((r) => r + r), ...M.map((r) => r + flip(r))];
-  }, [M]);
+  const n = M.length;
+  const flip = (r: string) => [...r].map((c) => (c === "1" ? "0" : "1")).join("");
+  // Sylvester doubling only stays solvable when the base contains the all-ones
+  // row (the average over everyone). As in the CLI (Hadamard.generate_new_table),
+  // it replaces the negation query (`col = '0'`): that query plus its `col = '1'`
+  // partner already sum to the all-ones row, so nothing is lost.
+  const base = useMemo(() => {
+    const negation = M.map((r) => M.includes(flip(r))).lastIndexOf(true);
+    const drop = negation === -1 ? M.length - 1 : negation;
+    return ["1".repeat(n), ...M.filter((_, i) => i !== drop)];
+  }, [M, n]);
+  const doubled = useMemo(
+    () => [...base.map((r) => r + r), ...base.map((r) => r + flip(r))],
+    [base],
+  );
+  const [hover, setHover] = useState<number | null>(null);
   return (
     <div className="scaling">
-      <p>
-        The same attack principles apply at scale: with more aggregates, bigger datasets can be
-        reconstructed. See the{" "}
-        <a href="#datasets" onClick={(e) => { e.preventDefault(); onDatasets(); }}>
-          examples of reconstructable datasets
-        </a>
-        .
-      </p>
+      <div>
+        <p>
+          The same attack principles apply at scale: with more aggregates, bigger datasets can be
+          reconstructed. Our tool first finds averages that pin down {n} patients. To reach more
+          patients, it doesn't start over: it <strong>doubles</strong> both the patients and the
+          averages, to {2 * n}, {4 * n}, {8 * n} patients and beyond, and every doubled set can
+          still be solved exactly.
+        </p>
+        <div className="info" role="note">
+          <svg className="info-icon" viewBox="0 0 20 20" aria-hidden>
+            <circle cx="10" cy="10" r="9" fill="none" stroke="currentColor" strokeWidth="1.8" />
+            <rect x="9.1" y="8.5" width="1.8" height="6" rx="0.9" fill="currentColor" />
+            <circle cx="10" cy="5.8" r="1.1" fill="currentColor" />
+          </svg>
+          <span>
+            The highlighted row is the overall average of all patients, often seen as the safest
+            statistic to publish. Here, it is what makes the doubling work.
+          </span>
+        </div>
+        <p>
+          The{" "}
+          <a href="#datasets" onClick={(e) => { e.preventDefault(); onDatasets(); }}>
+            examples of reconstructable datasets
+          </a>{" "}
+          are built exactly this way.
+        </p>
+      </div>
       <figure className="doubling">
-        <div className="matrix small" style={{ gridTemplateColumns: `repeat(${doubled.length}, 1fr)` }} aria-hidden>
-          {doubled.map((row, i) =>
-            [...row].map((c, j) => {
-              const flipped = i >= M.length && j >= M.length;
-              return <div key={`${i}-${j}`} className={`cell${c === "1" ? " on" : ""}${flipped ? " flipped" : ""}`} />;
-            }),
+        <div className="doubling-grid" onMouseLeave={() => setHover(null)}>
+          <div className="matrix small" style={{ gridTemplateColumns: `repeat(${doubled.length}, 1fr)` }} aria-hidden>
+            {doubled.map((row, i) =>
+              [...row].map((c, j) => {
+                const ones = i === 0;
+                // The top-left block is the matrix our tool found for the first n patients.
+                const original = !ones && i < n && j < n;
+                return (
+                  <div
+                    key={`${i}-${j}`}
+                    className={`cell${c === "1" ? " on" : ""}${ones ? " ones" : ""}${original ? " original" : ""}${ones && hover === i ? " hovered" : ""}`}
+                    onMouseEnter={() => setHover(i)}
+                  />
+                );
+              }),
+            )}
+          </div>
+          {hover === 0 && (
+            <div className="grid-tip" style={{ top: `${(1 / doubled.length) * 100}%` }}>
+              The overall average of all {2 * n} patients
+            </div>
           )}
         </div>
         <figcaption className="muted small">
-          The {M.length}-patient grid grown to {2 * M.length} patients — still exactly solvable.
+          <span className="swatch original" aria-hidden /> the averages our tool found for {n}{" "}
+          patients · <span className="swatch ones" aria-hidden /> the overall average. Doubled to{" "}
+          {2 * n} patients — still exactly solvable.
         </figcaption>
       </figure>
     </div>
