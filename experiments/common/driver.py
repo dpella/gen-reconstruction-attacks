@@ -113,20 +113,21 @@ def run_pipeline(cfg: dict, decoy_fraction: float = 0.0) -> Tuple[Table, List[IQ
         )
 
     n_core = new_table.shape[0]
+    used_hadamard = bool(hadamard_order and hadamard_order > 1)
 
-    # Without the Hadamard expansion there may be no all-records query to
-    # rewrite. With (p, c) = (1/2, 1/4) the MIP search closes the matrix with
-    # LastNegationClosingStrategy: `<last column> = '0'` on a column whose core
-    # values are exactly '0'/'1'. Every query is then `= '1'` or that `= '0'`
-    # negation, and decoys (valued '2'/'3') satisfy neither, so they can be
-    # added directly. If the search closed with AllClosingStrategy (other
-    # (p, c)), the all-records query exists and the branch below handles it.
-    has_all_records = any(
-        isinstance(q, SelectQuery) and not isinstance(q, SelectWhereQuery)
-        for q in queries
-    )
-
-    if decoy_fraction > 0 and not has_all_records:
+    if decoy_fraction > 0 and not used_hadamard:
+        # MIP only: decoys require the search to have closed the matrix with
+        # LastNegationClosingStrategy ((p, c) = (1/2, 1/4)), i.e. with
+        # `<last column> = '0'` on a column whose core values are exactly
+        # '0'/'1'. Decoys (valued '2'/'3') satisfy neither that query nor any
+        # `= '1'` query. An all-records query (AllClosingStrategy) would count
+        # every decoy, so refuse instead of trying to repair it.
+        if any(isinstance(q, SelectQuery) and not isinstance(q, SelectWhereQuery) for q in queries):
+            raise ValueError(
+                "The MIP search closed the matrix with an all-records query, which "
+                "decoys would satisfy. Make sure to add decoys only when calling the "
+                "MIP with LastNegationClosingStrategy ((p, c) = (1/2, 1/4))."
+            )
         n_decoys = _decoy_count(n_core, decoy_fraction)
         new_table, queries = Decoy(n_decoys).generate_decoy_table(new_table, queries)
     elif decoy_fraction > 0:
