@@ -5,6 +5,7 @@ import Downloads from "./Downloads";
 import Intro, { PaperLink } from "./Intro";
 import { REPO } from "./links";
 import logo from "./assets/dpella-logo.png";
+import logoDark from "./assets/dpella-logo-dark.png";
 
 type Tab = "intro" | "how" | "datasets";
 const TABS: { id: Tab; label: string }[] = [
@@ -44,7 +45,7 @@ export default function App() {
       <header className="topbar">
         <div className="wrap topbar-inner">
           <a className="brand" href="#" onClick={(e) => { e.preventDefault(); go("intro"); }}>
-            <img src={logo} alt="DPella" className="brand-logo" />
+            <Logo className="brand-logo" />
             <span className="brand-name">Reconstruction attacks on health statistics</span>
           </a>
           <nav className="tabs" role="tablist">
@@ -67,7 +68,7 @@ export default function App() {
 
       <footer className="footer">
         <div className="wrap">
-          <img src={logo} alt="DPella" className="footer-logo" />
+          <Logo className="footer-logo" />
           <span>
             Built on the paper <PaperLink /> ·{" "}
             <a href={REPO} target="_blank" rel="noopener noreferrer">source code</a> · All data on
@@ -76,5 +77,15 @@ export default function App() {
         </div>
       </footer>
     </>
+  );
+}
+
+/** The DPella logo; the dark-mode version has a light wordmark. */
+function Logo({ className }: { className: string }) {
+  return (
+    <picture>
+      <source srcSet={logoDark} media="(prefers-color-scheme: dark)" />
+      <img src={logo} alt="DPella" className={className} />
+    </picture>
   );
 }
