@@ -1,0 +1,7 @@
+.git
+**/__pycache__
+webapp/cache
+webapp/frontend/node_modules
+webapp/frontend/dist
+examples
+experiments/*/output*
