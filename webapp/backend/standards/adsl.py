@@ -161,10 +161,10 @@ ADSL_PILOT = SchemaTemplate(
         "(CDISCPILOT01), plus four baseline covariates."
     ),
     story=(
-        "The study report's baseline tables give the mean baseline MMSE score for "
-        "broad subgroups — by treatment arm, site, sex, race, age, height, weight, "
-        "education, disease duration and baseline vital signs. Each subgroup "
-        "contains half of the subjects."
+        "Suppose the sponsor shares the subject-level dataset with researchers, but "
+        "without the baseline MMSE score, while the study report gives the mean "
+        "baseline MMSE for broad subgroups: by treatment arm, site, sex, race, age, "
+        "height, weight, education, disease duration and baseline vital signs."
     ),
     sensitive=Sensitive(
         "MMSETOT", 10, 24, "points",
@@ -288,9 +288,10 @@ ADSL_T2D = SchemaTemplate(
         "diabetes study report tabulates."
     ),
     story=(
-        "The study report and the CTIS results summary give mean baseline HbA1c by "
-        "treatment arm, country, sex, age, weight, blood pressure, kidney function and "
-        "diabetes duration — each subgroup half of the randomised subjects."
+        "Suppose the sponsor shares the subject-level dataset with researchers, but "
+        "without baseline HbA1c, while the study report and the CTIS results summary "
+        "give mean baseline HbA1c by treatment arm, country, sex, age, weight, blood "
+        "pressure, kidney function and diabetes duration."
     ),
     sensitive=Sensitive("HBA1CBL", 7.0, 10.5, "%", "Baseline HbA1c (%)", decimals=1),
     static=[

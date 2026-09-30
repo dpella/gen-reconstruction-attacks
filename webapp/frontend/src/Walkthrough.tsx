@@ -33,8 +33,8 @@ export default function Walkthrough({ list, onDatasets }: Props) {
       <section className="hero">
         <h1>See the attack</h1>
         <p className="lead">
-          Pick a dataset, look at the averages that would be published about {n} synthetic
-          patients, then solve them.
+          Pick a dataset and look at what is released about {n} synthetic patients — their
+          attributes, and averages of one withheld value — then solve for it.
         </p>
       </section>
 
@@ -48,13 +48,11 @@ export default function Walkthrough({ list, onDatasets }: Props) {
         <>
           <Step
             num={2}
-            title="The private table and the published averages"
+            title="Released attributes, a withheld value, and the averages"
             intro={
               <>
-                {schema.story} Only the {result.queries.length} averages are published;{" "}
-                <strong>{result.sensitive.label}</strong> never is. The other columns are released
-                attributes (see <em>Why it matters</em>, step 4). Select an average to see who it
-                covers.
+                {schema.story} The <strong>{result.sensitive.label}</strong> column itself is never
+                released. Select an average to see who it covers.
               </>
             }
           >
@@ -74,8 +72,9 @@ export default function Walkthrough({ list, onDatasets }: Props) {
             title="The attack: solve the equations"
             intro={
               <>
-                Each average is one equation. {n} independent equations for {n} unknowns have
-                exactly one solution.
+                Because the attributes are released, anyone can tell which patients each average
+                covers — so each average is one equation. {n} independent equations for {n}{" "}
+                unknowns have exactly one solution.
               </>
             }
           >
@@ -92,8 +91,8 @@ export default function Walkthrough({ list, onDatasets }: Props) {
                 </button>
                 {revealed && (
                   <p className="success">
-                    All {result.summary.reconstructable_records} values of{" "}
-                    <code>{result.sensitive.name}</code> recovered exactly (largest error{" "}
+                    All {result.summary.reconstructable_records} withheld values of{" "}
+                    <strong>{result.sensitive.label}</strong> recovered exactly (largest error{" "}
                     {result.summary.max_abs_error.toExponential(0)} {result.sensitive.unit}) —
                     see the revealed column in the table above.
                   </p>

@@ -301,9 +301,10 @@ OMOP_T2DM = SchemaTemplate(
         "and Charlson/CHADS2/CHADS2VASc — one row per cohort subject."
     ),
     story=(
-        "A network study reports mean HbA1c for cohort subgroups defined by covariates: "
-        "comorbidities, drug classes, measurement ranges, age and care site — the "
-        "'Table 1' and characterisation output of every OHDSI study."
+        "Suppose the cohort's covariates are made available to analysts, but not the "
+        "HbA1c values, while the study's characterisation output ('Table 1') reports "
+        "mean HbA1c for subgroups defined by comorbidities, drug classes, measurement "
+        "ranges, age and care site."
     ),
     sensitive=Sensitive(
         col(_ref(cid_measurement("hba1c"), measurement_name("hba1c"), 706, 3004410)),
@@ -383,8 +384,9 @@ OMOP_HIV = cohort(
         "one row per cohort subject."
     ),
     story=(
-        "A network study reports mean viral load for cohort subgroups defined by CD4 "
-        "bands, comorbidities, co-medication, age and care site."
+        "Suppose the cohort's covariates are made available to analysts, but not the "
+        "viral loads, while the study reports mean viral load for subgroups defined "
+        "by CD4 bands, comorbidities, co-medication, age and care site."
     ),
     sensitive=Sensitive(
         col(_ref(cid_measurement("viral_load"), measurement_name("viral_load"), 706, 3010747)),
@@ -433,10 +435,11 @@ OMOP_COVID = cohort(
         "visit counts — one row per cohort subject."
     ),
     story=(
-        "A European network study on COVID-19 hospitalisations reports the mean "
-        "Hospital Frailty Risk Score for subgroups defined by comorbidities, "
-        "treatments, vital signs, lab values and care site — every group far above "
-        "the usual minimum cell count of 5."
+        "Suppose the cohort's covariates are made available to analysts, but not the "
+        "frailty scores, while a European network study reports the mean Hospital "
+        "Frailty Risk Score for subgroups defined by comorbidities, treatments, vital "
+        "signs, lab values and care site — every group far above the usual minimum "
+        "cell count of 5."
     ),
     sensitive=Sensitive(col(HFRS), 0, 30, "points", "Hospital Frailty Risk Score (frailty)", decimals=1,
                         label="frailty score"),
