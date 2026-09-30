@@ -27,7 +27,8 @@ export default function Intro() {
           single column identifies anyone. And the truly sensitive values, such as lab results,
           are simply withheld. So releasing <strong>de-identified attributes</strong>,{" "}
           <strong>withholding the sensitive ones</strong> and publishing{" "}
-          <strong>aggregates over many people</strong> is the standard way to share health data.
+          <strong>aggregates over many people</strong> is widely seen as a safe way to share
+          health data.
         </p>
       </Chapter>
 
