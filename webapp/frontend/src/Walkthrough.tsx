@@ -317,10 +317,12 @@ function Scaling({ result, onDatasets }: { result: Result; onDatasets: () => voi
             {doubled.map((row, i) =>
               [...row].map((c, j) => {
                 const ones = i === 0;
+                // The top-left block is the matrix our tool found for the first n patients.
+                const original = !ones && i < n && j < n;
                 return (
                   <div
                     key={`${i}-${j}`}
-                    className={`cell${c === "1" ? " on" : ""}${ones ? " ones" : ""}${ones && hover === i ? " hovered" : ""}`}
+                    className={`cell${c === "1" ? " on" : ""}${ones ? " ones" : ""}${original ? " original" : ""}${ones && hover === i ? " hovered" : ""}`}
                     onMouseEnter={() => setHover(i)}
                   />
                 );
@@ -334,7 +336,9 @@ function Scaling({ result, onDatasets }: { result: Result; onDatasets: () => voi
           )}
         </div>
         <figcaption className="muted small">
-          The {n}-patient grid grown to {2 * n} patients — still exactly solvable.
+          <span className="swatch original" aria-hidden /> the averages our tool found for {n}{" "}
+          patients · <span className="swatch ones" aria-hidden /> the overall average. Doubled to{" "}
+          {2 * n} patients — still exactly solvable.
         </figcaption>
       </figure>
     </div>

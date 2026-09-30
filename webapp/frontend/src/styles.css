@@ -274,3 +274,10 @@ table.data th.sensitive { z-index: 2; }
 }
 
 .dataset .scenario { color: var(--muted); }
+
+/* "Scaling up": the original matrix found by the tool, before doubling. */
+.matrix.small .cell.original { background: color-mix(in srgb, var(--blue) 22%, var(--cell-off)); }
+.matrix.small .cell.on.original { background: var(--blue); opacity: 0.85; }
+.swatch { display: inline-block; width: 0.7em; height: 0.7em; border-radius: 2px; vertical-align: baseline; }
+.swatch.original { background: var(--blue); }
+.swatch.ones { background: var(--accent); }
