@@ -1,0 +1,11 @@
+# Showcase web app, published on all interfaces at port 10000
+# (http://latinos.cse.chalmers.se:10000).
+services:
+  showcase:
+    build:
+      context: ..
+      dockerfile: webapp/Dockerfile
+    image: reconstruction-showcase
+    restart: unless-stopped
+    ports:
+      - "10000:8000"
