@@ -40,7 +40,7 @@ class Hadamard:
         """
         Generate a new table from the Hadamard matrix of order k.
         """
-        new_matrix = H.append_start_row([1] * H.cols)  # Add the last row of all 1s
+        new_matrix = H.append_start_row([1] * H.cols)  # Add the first row of all 1s
         new_matrix = self.generate_new_matrix(new_matrix, k)
         self.__logger.creation(
             f"The Hadamard matrix of order {k}:\n{new_matrix.show()}"
