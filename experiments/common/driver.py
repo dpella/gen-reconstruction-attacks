@@ -40,6 +40,7 @@ import argparse
 import csv
 import json
 import random
+import re
 import sys
 from pathlib import Path
 from typing import List, Tuple
@@ -112,8 +113,24 @@ def run_pipeline(cfg: dict, decoy_fraction: float = 0.0) -> Tuple[Table, List[IQ
         )
 
     n_core = new_table.shape[0]
+    used_hadamard = bool(hadamard_order and hadamard_order > 1)
 
-    if decoy_fraction > 0:
+    if decoy_fraction > 0 and not used_hadamard:
+        # MIP only: decoys require the search to have closed the matrix with
+        # LastNegationClosingStrategy ((p, c) = (1/2, 1/4)), i.e. with
+        # `<last column> = '0'` on a column whose core values are exactly
+        # '0'/'1'. Decoys (valued '2'/'3') satisfy neither that query nor any
+        # `= '1'` query. An all-records query (AllClosingStrategy) would count
+        # every decoy, so refuse instead of trying to repair it.
+        if any(isinstance(q, SelectQuery) and not isinstance(q, SelectWhereQuery) for q in queries):
+            raise ValueError(
+                "The MIP search closed the matrix with an all-records query, which "
+                "decoys would satisfy. Make sure to add decoys only when calling the "
+                "MIP with LastNegationClosingStrategy ((p, c) = (1/2, 1/4))."
+            )
+        n_decoys = _decoy_count(n_core, decoy_fraction)
+        new_table, queries = Decoy(n_decoys).generate_decoy_table(new_table, queries)
+    elif decoy_fraction > 0:
         # Replace the all-records SelectQuery (inserted by Hadamard) with the
         # negation of the `= '1'` query on the binary column, *before* adding
         # decoys — otherwise the unconditional all-records query would count
@@ -218,13 +235,19 @@ def apply_renames(table: Table, queries: List[IQuery], cfg: dict) -> Tuple[List[
             s = s.replace(raw, new)
         # Value literal rewrite: rewrite every `<renamed_col> = 'X'` using the
         # configured mapping for X. Covers the standard `= '1'` matching
-        # queries and the decoy-mode `= '0'` negation query.
+        # queries and the decoy-mode `= '0'` negation query. Single pass per
+        # column: sequential str.replace would rewrite a mapped value again
+        # when labels are themselves codes (e.g. '1' -> '2' -> '3').
         for raw_col, spec in bin_rename.items():
             if not spec["values"]:
                 continue
             new_col = spec["name"]
-            for raw_val, mapped_val in spec["values"].items():
-                s = s.replace(f"{new_col} = '{raw_val}'", f"{new_col} = '{mapped_val}'")
+            pattern = re.compile(rf"(?<![\w]){re.escape(new_col)} = '([^']*)'")
+            s = pattern.sub(
+                lambda m, spec=spec, new_col=new_col:
+                    f"{new_col} = '{spec['values'].get(m.group(1), m.group(1))}'",
+                s,
+            )
         sql_list.append(s)
 
     return header, rows, sql_list
