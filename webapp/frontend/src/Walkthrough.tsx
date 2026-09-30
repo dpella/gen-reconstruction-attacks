@@ -52,7 +52,8 @@ export default function Walkthrough({ list, onDatasets }: Props) {
             intro={
               <>
                 {schema.story} Only the {result.queries.length} averages are published;{" "}
-                <strong>{result.sensitive.label}</strong> never is. Select an average to see who it
+                <strong>{result.sensitive.label}</strong> never is. The other columns are released
+                attributes (see <em>Why it matters</em>, step 4). Select an average to see who it
                 covers.
               </>
             }
@@ -167,7 +168,10 @@ function DataTable({ result, active, revealed }: { result: Result; active: numbe
   const cols = useMemo(() => new Map(result.columns.map((c) => [c.name, c])), [result]);
   return (
     <div className="panel">
-      <div className="panel-title">Private table ({result.preview_rows.length} synthetic patients)</div>
+      <div className="panel-title">
+        The table ({result.preview_rows.length} synthetic patients): released attributes, and the withheld
+        column
+      </div>
       <div className="table-scroll">
         <table className="data">
           <thead>

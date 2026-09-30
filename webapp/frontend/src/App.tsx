@@ -25,7 +25,10 @@ export default function App() {
 
   useEffect(() => {
     api.schemas().then(setSchemas, (e) => setError(String(e)));
-    const onHash = () => setTab(tabFromHash());
+    const onHash = () => {
+      setTab(tabFromHash());
+      window.scrollTo({ top: 0 });
+    };
     window.addEventListener("hashchange", onHash);
     return () => window.removeEventListener("hashchange", onHash);
   }, []);
