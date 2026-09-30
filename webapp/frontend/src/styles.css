@@ -16,7 +16,6 @@
   --secret-soft: #fdecec;
   --ok: #2f9467;
   --cell-off: #e3ecea;
-  --flip: var(--blue);
   --radius: 10px;
   color-scheme: light;
 }
@@ -156,18 +155,13 @@ table.data td.sensitive.revealed { color: var(--ok); font-weight: 650; transitio
 .matrix .cell.on.active { opacity: 1; }
 .matrix.small { gap: 1px; max-width: 320px; }
 .matrix.small .cell { border-radius: 1px; cursor: default; }
-.matrix.small .cell.flipped { background: color-mix(in srgb, var(--flip) 25%, var(--cell-off)); }
-.matrix.small .cell.on.flipped { background: var(--flip); opacity: 0.8; }
 .matrix.small .cell.on.ones { background: var(--accent); opacity: 1; }
 
 .scaling { display: grid; gap: 2rem; grid-template-columns: minmax(0, 1fr) minmax(0, 320px); align-items: start; }
 @media (max-width: 760px) { .scaling { grid-template-columns: minmax(0, 1fr); } }
 .scaling p:first-child { margin-top: 0; }
-.swap { display: grid; gap: 0.35rem; }
-.swap code { font-size: 0.8rem; word-break: break-word; }
-.swap p { margin: 0; }
 .info {
-  display: flex; gap: 0.6rem; align-items: flex-start; margin-top: 0.4rem;
+  display: flex; gap: 0.6rem; align-items: flex-start; margin: 0 0 1rem;
   padding: 0.6rem 0.75rem; border-radius: 8px; background: var(--accent-soft); font-weight: 550;
 }
 .info-icon { flex: none; width: 1.15rem; height: 1.15rem; margin-top: 0.15rem; color: var(--accent); }
@@ -180,7 +174,6 @@ table.data td.sensitive.revealed { color: var(--ok); font-weight: 650; transitio
   padding: 0.5rem 0.65rem; border-radius: 8px; font-size: 0.8rem; line-height: 1.4;
   background: var(--text); color: var(--bg); box-shadow: 0 4px 14px rgb(0 0 0 / 0.18);
 }
-.grid-tip code { display: block; margin-top: 0.2rem; font-size: 0.75rem; word-break: break-word; }
 
 /* Buttons */
 .btn, button.primary {

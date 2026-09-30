@@ -102,7 +102,7 @@ export default function Walkthrough({ list, onDatasets }: Props) {
           </Step>
 
           <Step num={4} title="Scaling up">
-            <Scaling result={result} onActive={setActive} onDatasets={onDatasets} />
+            <Scaling result={result} onDatasets={onDatasets} />
           </Step>
         </>
       )}
@@ -264,80 +264,49 @@ function Matrix({ result, active, onActive }: { result: Result; active: number; 
   );
 }
 
-function Scaling(props: { result: Result; onActive: (i: number) => void; onDatasets: () => void }) {
-  const { result, onActive, onDatasets } = props;
+function Scaling({ result, onDatasets }: { result: Result; onDatasets: () => void }) {
   const M = result.matrix;
   const n = M.length;
-  const s = result.sensitive;
   const flip = (r: string) => [...r].map((c) => (c === "1" ? "0" : "1")).join("");
   // Sylvester doubling only stays solvable when the base contains the all-ones
   // row (the average over everyone). As in the CLI (Hadamard.generate_new_table),
   // it replaces the negation query (`col = '0'`): that query plus its `col = '1'`
   // partner already sum to the all-ones row, so nothing is lost.
-  const { drop, partner } = useMemo(() => {
+  const base = useMemo(() => {
     const negation = M.map((r) => M.includes(flip(r))).lastIndexOf(true);
     const drop = negation === -1 ? M.length - 1 : negation;
-    return { drop, partner: M.indexOf(flip(M[drop])) };
-  }, [M]);
-  const base = useMemo(() => ["1".repeat(n), ...M.filter((_, i) => i !== drop)], [M, n, drop]);
+    return ["1".repeat(n), ...M.filter((_, i) => i !== drop)];
+  }, [M, n]);
   const doubled = useMemo(
     () => [...base.map((r) => r + r), ...base.map((r) => r + flip(r))],
     [base],
   );
-  const labels = useMemo(() => new Map(result.columns.map((c) => [c.name, c.label || c.name])), [result]);
   const [hover, setHover] = useState<number | null>(null);
-  const describe = (i: number) => describeQuery(result.queries[i].sql, labels);
-  // Select the average in step 2 and scroll it into view.
-  const avg = (i: number) => (
-    <a
-      href={`#avg-${i + 1}`}
-      onClick={(e) => {
-        e.preventDefault();
-        onActive(i);
-        document.getElementById(`avg-${i + 1}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
-      }}
-    >
-      #{i + 1}
-    </a>
-  );
   return (
     <div className="scaling">
       <div>
         <p>
           The same attack principles apply at scale: with more aggregates, bigger datasets can be
-          reconstructed. Our solver finds averages that pin down {n} patients. To reach more
-          patients, we don't search again: we <strong>double</strong> the grid.
+          reconstructed. Our tool first finds averages that pin down {n} patients. To reach more
+          patients, it doesn't start over: it <strong>doubles</strong> both the patients and the
+          averages, to {2 * n}, {4 * n}, {8 * n} patients and beyond, and every doubled set can
+          still be solved exactly.
         </p>
-        <div className="equation swap">
-          <span className="muted small">Before doubling: add the overall average</span>
-          <p>
-            Average {avg(drop)} (<code>{s.label} where {describe(drop)}</code>) is replaced by the overall
-            average of {s.label} across all patients:
-          </p>
-          <code>SELECT AVG({s.name}) FROM table;</code>
-          {partner !== -1 && (
-            <p>
-              No information is lost. The patients in average {avg(drop)} are exactly those not in
-              average {avg(partner)} ({describe(partner)}), so their total is the overall total
-              minus the total of {avg(partner)}.
-            </p>
-          )}
-          <div className="info" role="note">
-            <svg className="info-icon" viewBox="0 0 20 20" aria-hidden>
-              <circle cx="10" cy="10" r="9" fill="none" stroke="currentColor" strokeWidth="1.8" />
-              <rect x="9.1" y="8.5" width="1.8" height="6" rx="0.9" fill="currentColor" />
-              <circle cx="10" cy="5.8" r="1.1" fill="currentColor" />
-            </svg>
-            <span>
-              The overall average, often seen as the safest statistic to publish, is an essential
-              piece of the attack: it is what keeps the doubled grid exactly solvable.
-            </span>
-          </div>
+        <div className="info" role="note">
+          <svg className="info-icon" viewBox="0 0 20 20" aria-hidden>
+            <circle cx="10" cy="10" r="9" fill="none" stroke="currentColor" strokeWidth="1.8" />
+            <rect x="9.1" y="8.5" width="1.8" height="6" rx="0.9" fill="currentColor" />
+            <circle cx="10" cy="5.8" r="1.1" fill="currentColor" />
+          </svg>
+          <span>
+            The highlighted row is the overall average of all patients, often seen as the safest
+            statistic to publish. Here, it is what makes the doubling work.
+          </span>
         </div>
         <p>
-          Doubling again gives {4 * n}, {8 * n}, … patients. The{" "}
+          The{" "}
           <a href="#datasets" onClick={(e) => { e.preventDefault(); onDatasets(); }}>
-            downloadable datasets
+            examples of reconstructable datasets
           </a>{" "}
           are built exactly this way.
         </p>
@@ -347,12 +316,11 @@ function Scaling(props: { result: Result; onActive: (i: number) => void; onDatas
           <div className="matrix small" style={{ gridTemplateColumns: `repeat(${doubled.length}, 1fr)` }} aria-hidden>
             {doubled.map((row, i) =>
               [...row].map((c, j) => {
-                const flipped = i >= n && j >= n;
                 const ones = i === 0;
                 return (
                   <div
                     key={`${i}-${j}`}
-                    className={`cell${c === "1" ? " on" : ""}${flipped ? " flipped" : ""}${ones ? " ones" : ""}${ones && hover === i ? " hovered" : ""}`}
+                    className={`cell${c === "1" ? " on" : ""}${ones ? " ones" : ""}${ones && hover === i ? " hovered" : ""}`}
                     onMouseEnter={() => setHover(i)}
                   />
                 );
@@ -361,8 +329,7 @@ function Scaling(props: { result: Result; onActive: (i: number) => void; onDatas
           </div>
           {hover === 0 && (
             <div className="grid-tip" style={{ top: `${(1 / doubled.length) * 100}%` }}>
-              The overall average, over all {2 * n} patients:
-              <code>SELECT AVG({s.name}) FROM table;</code>
+              The overall average of all {2 * n} patients
             </div>
           )}
         </div>
