@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CENSUS, DINUR_NISSIM, NEW_ATTACKS, NORDSEC, PAPER_TITLE, REPO } from "./links";
+import { CENSUS, DINUR_NISSIM, LINKAGE, NEW_ATTACKS, NORDSEC, PAPER_TITLE, REPO } from "./links";
 
 export default function Intro() {
   return (
@@ -9,7 +9,7 @@ export default function Intro() {
         <h1>“It's only averages.” Why that is no longer enough.</h1>
         <p className="lead">
           Statistics about large groups of patients are published every day and are widely
-          considered safe. This page explains, in five short steps, why that belief breaks down
+          considered safe. This page explains, in six short steps, why that belief breaks down
           as health data becomes more connected — and shows it on realistic examples.
         </p>
       </section>
@@ -57,6 +57,34 @@ export default function Intro() {
 
       <Chapter
         num={4}
+        title="The scenario: attributes released, one value withheld, averages allowed"
+        figure={<ScenarioFigure />}
+      >
+        <p className="takeaway">
+          Withholding a sensitive attribute does not protect it: if quasi-identifiers are
+          released and averages of the attribute are allowed, the withheld value of every
+          patient can be inferred. 
+        </p>
+        <p>
+          The attack applies whenever a data holder <strong>releases the ordinary attributes</strong>{" "}
+          of each patient — age, sex, region, treatment, visit counts, with or without direct
+          identifiers such as name or personnummer — but <strong>withholds one sensitive
+          attribute</strong>, say HbA1c. For transparency, and so that others can learn about
+          the population, it still allows <strong>averages</strong> of that attribute to be
+          obtained: by region, by sex, by age band, by treatment.
+        </p>
+        <p>
+          Those ordinary attributes are <em>quasi-identifiers</em>: none names anyone, but
+          together they usually single out one person. Combined, the averages can pin down the
+          withheld value of <em>every row</em>. Once the sensitive column has been inferred, the
+          quasi-identifiers can be used to re-identify patients through{" "}
+          <a href={LINKAGE} target="_blank" rel="noopener noreferrer">traditional linkage attacks</a>{" "}
+          — even if no personnummer was ever released. 
+        </p>
+              </Chapter>
+
+      <Chapter
+        num={5}
         title="Enough averages reveal everyone"
         figure={<Puzzle />}
         flip
@@ -84,13 +112,14 @@ export default function Intro() {
         <p>
           At <strong>DPella</strong> we built a tool that systematises Dinur–Nissim attacks: from
           just the layout of a dataset, it generates data and innocent-looking statistics that
-          give every individual away. It powers this website, and it is{" "}
+          give every individual away. It powers this website — see the{" "}
+          <a href="#datasets">examples of reconstructable datasets</a> it generated — and it is{" "}
           <a href={REPO} target="_blank" rel="noopener noreferrer">open source</a>.
         </p>
       </Chapter>
 
       <Chapter
-        num={5}
+        num={6}
         title="Today's safeguards don't scale"
         figure={<CombineFigure />}
       >
@@ -226,6 +255,46 @@ function NetworkFigure() {
           <text x={n.x} y={n.y + 4} textAnchor="middle" className="fig-small">{n.label}</text>
         </g>
       ))}
+    </svg>
+  );
+}
+
+function ScenarioFigure() {
+  // The revealed record is the last row, level with the arrow pointing to it.
+  const rows = [["61", "M", "Uppsala", "48"], ["47", "F", "Skåne", "88"], ["54", "F", "Skåne", "71"]];
+  return (
+    <svg viewBox="0 0 360 200" className="fig" role="img"
+      aria-label="Released attributes and allowed averages together reveal each patient's withheld value">
+      <text x="10" y="16" className="fig-small">Released attributes</text>
+      <text x="200" y="16" className="fig-small fig-danger">Withheld</text>
+      {["age", "sex", "region"].map((h, j) => (
+        <text key={h} x={14 + j * 58} y="36" className="fig-small">{h}</text>
+      ))}
+      <text x="200" y="36" className="fig-small">HbA1c</text>
+      {rows.map((r, i) => (
+        <g key={i}>
+          <rect x="8" y={44 + i * 26} width="176" height="22" rx="4" className={i === rows.length - 1 ? "fig-highlight" : "fig-soft"} />
+          {r.slice(0, 3).map((v, j) => (
+            <text key={j} x={14 + j * 58} y={59 + i * 26} className="fig-cell">{v}</text>
+          ))}
+          <rect x="194" y={44 + i * 26} width="52" height="22" rx="4" className="fig-hidden" />
+          <text x="220" y={59 + i * 26} textAnchor="middle" className="fig-cell fig-danger">?</text>
+        </g>
+      ))}
+      <rect x="8" y="132" width="246" height="40" rx="8" className="fig-card" />
+      <text x="16" y="148" className="fig-small">Allowed: mean HbA1c by sex, by region,</text>
+      <text x="16" y="164" className="fig-small">by age band, … (each = half the patients)</text>
+      <path d="M252 104 h26" className="fig-arrow" markerEnd="url(#arrow2)" />
+      <rect x="282" y="72" width="72" height="64" rx="10" className="fig-card fig-danger-card" />
+      <text x="318" y="92" textAnchor="middle" className="fig-small">54, F, Skåne</text>
+      <text x="318" y="114" textAnchor="middle" className="fig-big fig-danger">71</text>
+      <text x="318" y="129" textAnchor="middle" className="fig-small">revealed</text>
+      <text x="8" y="192" className="fig-small">Exact value recovery.</text>
+      <defs>
+        <marker id="arrow2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M0 0 L10 5 L0 10 z" className="fig-arrowhead" />
+        </marker>
+      </defs>
     </svg>
   );
 }
