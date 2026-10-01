@@ -1,24 +1,31 @@
 import { useState } from "react";
-import { CENSUS, DINUR_NISSIM, LINKAGE, NEW_ATTACKS, NORDSEC, PAPER_TITLE, REPO } from "./links";
+import { CENSUS, DINUR_NISSIM, LINKAGE, NEW_ATTACKS, NORDSEC, PAPER_TITLE, REPO, UNIQUENESS } from "./links";
 
 export default function Intro() {
   return (
     <div className="intro">
       <section className="hero intro-hero">
         <p className="kicker">Health data · privacy</p>
-        <h1>“We never released the sensitive column.” It can still be recovered exactly.</h1>
+        <h1>What you never published can still be revealed</h1>
         <p className="lead">
-          A common, well-intentioned way to share health data is to release patients' attributes
-          without names, withhold the most sensitive values, and publish averages over large
-          groups. Each step feels safe. Together, though, they carry a{" "}
-          <strong>subtle but important</strong> risk. This page explains it in six short steps
-          — and shows it on health-data schemas used in practice.
+          Imagine two <strong>separate releases</strong> about the same patients. In one,
+          their attributes — such as sex, age and height — are shared without names. In another, statistics — averages over
+          large groups — are allowed on a sensitive value that was never released. Each release
+          looks safe on its own. Combined, they can reveal that value for every patient: a{" "}
+          <strong>subtle but important</strong> danger, and one that will become easier to run into
+          as the European Health Data Space opens more ways to access health data. This page
+          explains it in six short steps — and shows it on health-data schemas used in
+          practice.
+        </p>
+        <p className="takeaway">
+          Releasing de-identified attributes, and later allowing aggregates over a sensitive
+          attribute, can reveal that sensitive attribute for every patient.
         </p>
       </section>
 
       <Chapter
         num={1}
-        title="Statistics and de-identified data feel safe"
+        title="Aggregates and de-identified data feel safe"
         figure={<CrowdFigure />}
       >
         <p>
@@ -53,42 +60,47 @@ export default function Intro() {
         figure={<NetworkFigure />}
       >
         <p>
-          That world is ending. The <strong>European Health Data Space (EHDS)</strong> will let
-          researchers, companies and public bodies across the EU request health statistics
-          through national health-data access bodies — including answers “in anonymised
-          statistical format”. Add dashboards, data networks and AI tools, and the number of
-          aggregates released about the <em>same</em> patients grows from a handful to
-          thousands. This is a huge opportunity for research and care.
+          From 2029, the European Health Data Space lets researchers across the EU access health
+          data inside secure processing environments — confined environments where every export
+          of information is carefully reviewed. This is a huge opportunity for research and care.
+          But imagine two exports about the same group of patients. The first contains
+          de-identified records with only age, sex, height and region — no medical information
+          at all — and looks entirely harmless. A later one contains statistics over a sensitive
+          attribute, e.g., the average HbA1c, or HIV viral load, by sex, by age band and by
+          height band; every group is large, so it looks safe too. When combined, it is possible
+          to infer the values of HbA1c for each record! Each export passes its own review and
+          nothing flags the combination, so the result could be a privacy breach that is hard to
+          detect.
         </p>
       </Chapter>
 
       <Chapter
         num={4}
-        title="The scenario: attributes released, one value withheld, averages allowed"
+        title="The general pattern: de-identified records plus aggregates"
         figure={<ScenarioFigure />}
       >
-        <p className="takeaway">
-          Withholding a sensitive attribute does not protect it: if quasi-identifiers are
-          released and averages of the attribute are allowed, the withheld value of every
-          patient can be inferred. 
+        <p>
+          The example in step 3 follows a general pattern. One release contains{" "}
+          <strong>de-identified records</strong>: each patient's ordinary attributes — age, sex,
+          region, treatment, visit counts — with or without direct identifiers such as name or
+          personnummer, but without the sensitive attribute. Another release contains{" "}
+          <strong>aggregates</strong> over that sensitive attribute, say the average HbA1c, for
+          groups defined by those same attributes. In isolation, each release looks safe.
         </p>
         <p>
-          The attack applies whenever a data holder <strong>releases the ordinary attributes</strong>{" "}
-          of each patient — age, sex, region, treatment, visit counts, with or without direct
-          identifiers such as name or personnummer — but <strong>withholds one sensitive
-          attribute</strong>, say HbA1c. For transparency, and so that others can learn about
-          the population, it still allows <strong>averages</strong> of that attribute to be
-          obtained: by region, by sex, by age band, by treatment.
-        </p>
-        <p>
-          Those ordinary attributes are <em>quasi-identifiers</em>: none names anyone, but
-          together they usually single out one person. Combined, the averages can pin down the
-          withheld value of <em>every row</em>. Once the sensitive column has been inferred, the
-          quasi-identifiers can be used to re-identify patients through{" "}
+          The danger is that those ordinary attributes are <em>quasi-identifiers</em>: none names
+          anyone, but together they can single out a person — ZIP code, sex and date of birth
+          alone{" "}
+          <a href={UNIQUENESS} target="_blank" rel="noopener noreferrer">
+            identify 87% of Americans
+          </a>
+          . Combined with the records, the
+          aggregates can be solved to infer the sensitive value of <em>every record</em>. Once it
+          is inferred, the quasi-identifiers can be used to re-identify patients through{" "}
           <a href={LINKAGE} target="_blank" rel="noopener noreferrer">traditional linkage attacks</a>{" "}
-          — even if no personnummer was ever released. 
+          — even if no personnummer was ever released.
         </p>
-              </Chapter>
+      </Chapter>
 
       <Chapter
         num={5}
@@ -117,10 +129,11 @@ export default function Intro() {
           .
         </p>
         <p>
-          At <strong>DPella</strong> we built a tool that systematises Dinur–Nissim attacks: from
-          just the layout of a dataset, it generates data and innocent-looking statistics that
-          give every individual away. It powers this website — see the{" "}
-          <a href="#datasets">examples of reconstructable datasets</a> it generated — and it is{" "}
+          At <strong>DPella</strong> we develop a tool inspired by the Dinur–Nissim attack,
+          adapted to show the danger on data schemas used in practice: from just the layout of a
+          dataset, it generates data and innocent-looking statistics that give every individual
+          away. See the <a href="#datasets">examples of reconstructable datasets</a> our tool
+          generated — and it is{" "}
           <a href={REPO} target="_blank" rel="noopener noreferrer">open source</a>.
         </p>
       </Chapter>
@@ -130,7 +143,7 @@ export default function Intro() {
         title="Safeguards built for a different world"
         figure={<CombineFigure />}
       >
-        <p>Releases are usually protected in two ways, both designed for the world of step 2:</p>
+        <p>Releases are usually protected in two ways, both designed for a static world where data stood still:</p>
         <ul className="bullets">
           <li>
             <strong>Expert review.</strong> An experienced statistician checks each table — for
@@ -144,13 +157,6 @@ export default function Intro() {
             risk, at a real cost in usefulness — so it is used sparingly.
           </li>
         </ul>
-        <p>
-          The good news: the risk can be checked <em>before</em> publishing. Our aim is to help
-          you see it on data that looks like your own, and to test the privacy metrics and
-          disclosure rules you may already be using. Every one of the{" "}
-          <a href="#datasets">datasets on this site</a> is known to leak — so a reliable metric
-          should flag it.
-        </p>
       </Chapter>
 
       <section className="closing">
@@ -277,9 +283,9 @@ function ScenarioFigure() {
   const rows = [["61", "M", "Uppsala", "48"], ["47", "F", "Skåne", "88"], ["54", "F", "Skåne", "71"]];
   return (
     <svg viewBox="0 0 360 200" className="fig" role="img"
-      aria-label="Released attributes and allowed averages together reveal each patient's withheld value">
-      <text x="10" y="16" className="fig-small">Released attributes</text>
-      <text x="200" y="16" className="fig-small fig-danger">Withheld</text>
+      aria-label="De-identified records and aggregates together reveal each patient's sensitive value">
+      <text x="10" y="16" className="fig-small">De-identified records</text>
+      <text x="200" y="16" className="fig-small fig-danger">Sensitive</text>
       {["age", "sex", "region"].map((h, j) => (
         <text key={h} x={14 + j * 58} y="36" className="fig-small">{h}</text>
       ))}
@@ -295,7 +301,7 @@ function ScenarioFigure() {
         </g>
       ))}
       <rect x="8" y="132" width="246" height="40" rx="8" className="fig-card" />
-      <text x="16" y="148" className="fig-small">Allowed: mean HbA1c by sex, by region,</text>
+      <text x="16" y="148" className="fig-small">Aggregates: mean HbA1c by sex, by region,</text>
       <text x="16" y="164" className="fig-small">by age band, … (each = half the patients)</text>
       <path d="M252 104 h26" className="fig-arrow" markerEnd="url(#arrow2)" />
       <rect x="282" y="72" width="72" height="64" rx="10" className="fig-card fig-danger-card" />

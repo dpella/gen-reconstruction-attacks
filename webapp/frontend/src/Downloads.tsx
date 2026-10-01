@@ -43,22 +43,23 @@ export default function Downloads({ list }: { list: SchemaList }) {
           Ready-made synthetic datasets to help you see the risk on familiar data formats, and to
           test the privacy metrics, anonymisation tools and disclosure-control rules you may be
           using: every dataset here is known to leak, so a reliable metric should flag it. Each
-          follows the scenario from <em>Why it matters</em>: every
-          column is a released attribute except one <strong>withheld</strong> sensitive column,
-          and the queries average that column over groups defined by the released attributes.
-          Together they recover the withheld column <strong>exactly</strong>, for every
-          vulnerable patient — even though every query averages over half of them.
+          follows the pattern from <em>Why it matters</em>: the{" "}
+          <strong>de-identified records</strong> are released — every column except one{" "}
+          <strong>sensitive</strong> column — and <strong>aggregates</strong> (averages) of that
+          column can be queried over groups defined by the records' attributes. Together they let
+          the sensitive column be inferred <strong>exactly</strong>, for every vulnerable patient —
+          even though every aggregate covers half of them.
         </p>
         <p className="muted">
           Each dataset follows its data standard exactly — official variable names, codes and
-          derivations — and is built from a {list.demo_n}-patient core found by the optimiser,
+          derivations — and is built from a {list.demo_n}-patient core found by our tool,
           scaled with Hadamard doublings to as many patients as the standard's variables
           support. In the 10% and 5% variants, the vulnerable patients are the first rows; the
-          rest are decoys: released patients who never fall into any averaged group, so
-          deleting them would not change a single published average. The downloaded{" "}
-          <code>dataset.csv</code> includes the withheld column so you can verify the attack —
-          in the scenario it would never be released. Every dataset below is checked before
-          publication: solving the published averages recovers every vulnerable value exactly.
+          rest are decoys: released records that never fall into any aggregated group, so
+          deleting them would not change a single published aggregate. The downloaded{" "}
+          <code>dataset.csv</code> includes the sensitive column so you can verify the attack —
+          in the scenario it is never released. Every dataset below is checked before
+          publication: solving the published aggregates infers every vulnerable value exactly.
         </p>
       </section>
 
@@ -83,7 +84,7 @@ export default function Downloads({ list }: { list: SchemaList }) {
                     <p className="small">{s.summary}</p>
                     <p className="small scenario"><strong>Scenario:</strong> {s.story}</p>
                     <p className="secret small">
-                      Withheld column: <code>{s.sensitive.name}</code> — {s.sensitive.description} (
+                      Sensitive column: <code>{s.sensitive.name}</code> — {s.sensitive.description} (
                       {fmt(s.sensitive.low)}–{fmt(s.sensitive.high)} {s.sensitive.unit})
                     </p>
                     <Sources schema={s} />

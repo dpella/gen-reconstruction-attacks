@@ -7,8 +7,8 @@ Datasets from Aggregate Releases"_, to appear at
 Given only a table schema, this tool automatically produces a **concrete
 witness** — a synthetic table together with a typical-looking aggregate
 workload — under which the sensitive column can be uniquely reconstructed.
-The construction operationalises the classical Dinur–Nissim reconstruction
-result at the level of an arbitrary input schema, making the theoretical
+The construction builds on and adapts the classical Dinur–Nissim
+reconstruction attack to an arbitrary input schema, making the theoretical
 risk concrete on data an organisation can recognise as its own.
 
 ## Contents
