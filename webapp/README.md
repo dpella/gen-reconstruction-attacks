@@ -8,7 +8,10 @@ Releases* (to appear at NordSec 2026).
 
 ## The scenario
 
-The site follows the attacker model from the paper's introduction:
+The core message: **releasing quasi-identifiers while allowing averages of a
+sensitive attribute to be queried can let anyone infer that attribute for
+every patient.** The site follows the attacker model from the paper's
+introduction:
 
 - a data holder **releases** each patient's ordinary attributes (age, sex,
   region, treatment, …), with or without direct identifiers such as name or

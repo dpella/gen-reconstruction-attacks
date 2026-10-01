@@ -33,8 +33,9 @@ export default function Walkthrough({ list, onDatasets }: Props) {
       <section className="hero">
         <h1>See the attack</h1>
         <p className="lead">
-          Pick a dataset and look at what is released about {n} synthetic patients — their
-          attributes, and averages of one withheld value — then solve for it.
+          Pick a dataset. First, its de-identified records are released; later, aggregates — here,
+          averages — of one sensitive attribute can be queried. Each release looks safe on its own
+          — see how, together, they reveal that attribute for all {n} synthetic patients.
         </p>
       </section>
 
@@ -48,11 +49,11 @@ export default function Walkthrough({ list, onDatasets }: Props) {
         <>
           <Step
             num={2}
-            title="Released attributes, a withheld value, and the averages"
+            title="De-identified records, a sensitive attribute, and the aggregates"
             intro={
               <>
-                {schema.story} The <strong>{result.sensitive.label}</strong> column itself is never
-                released. Select an average to see who it covers.
+                {schema.story} The sensitive column, <strong>{result.sensitive.label}</strong>, is
+                never released. Select an average to see who it covers.
               </>
             }
           >
@@ -72,8 +73,8 @@ export default function Walkthrough({ list, onDatasets }: Props) {
             title="The attack: solve the equations"
             intro={
               <>
-                Because the attributes are released, anyone can tell which patients each average
-                covers — so each average is one equation. {n} independent equations for {n}{" "}
+                Because the de-identified records are released, anyone can tell which patients each
+                average covers — so each average is one equation. {n} independent equations for {n}{" "}
                 unknowns have exactly one solution.
               </>
             }
@@ -91,8 +92,8 @@ export default function Walkthrough({ list, onDatasets }: Props) {
                 </button>
                 {revealed && (
                   <p className="success">
-                    All {result.summary.reconstructable_records} withheld values of{" "}
-                    <strong>{result.sensitive.label}</strong> recovered exactly (largest error{" "}
+                    All {result.summary.reconstructable_records} sensitive values of{" "}
+                    <strong>{result.sensitive.label}</strong> inferred exactly (largest error{" "}
                     {result.summary.max_abs_error.toExponential(0)} {result.sensitive.unit}) —
                     see the revealed column in the table above.
                   </p>
@@ -171,8 +172,8 @@ function DataTable({ result, active, revealed }: { result: Result; active: numbe
   return (
     <div className="panel">
       <div className="panel-title">
-        The table ({result.preview_rows.length} synthetic patients): released attributes, and the withheld
-        column
+        The table ({result.preview_rows.length} synthetic patients): de-identified records, and the
+        sensitive column
       </div>
       <div className="table-scroll">
         <table className="data">

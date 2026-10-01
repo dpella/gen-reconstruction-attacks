@@ -195,7 +195,7 @@ table.data td.sensitive.revealed { color: var(--ok); font-weight: 650; transitio
 
 /* Intro ("Why it matters") */
 .kicker { text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.78rem; font-weight: 650; color: var(--accent); margin: 0 0 0.5rem; }
-.intro-hero h1 { max-width: 30ch; }
+.intro-hero h1 { max-width: 30ch; text-wrap: balance; }
 .chapter {
   display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 420px); gap: 2.5rem; align-items: center;
   padding: 2.5rem 0; border-top: 1px solid var(--border);

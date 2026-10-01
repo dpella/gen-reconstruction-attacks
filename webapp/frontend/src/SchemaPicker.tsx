@@ -30,7 +30,7 @@ export default function SchemaPicker({ list, selected, onSelect }: Props) {
                   <strong>{s.title}</strong>
                   <span className="muted small">{s.domain}</span>
                   <span className="secret small">
-                    Withheld: <code>{s.sensitive.name}</code> — {s.sensitive.description}
+                    Sensitive: <code>{s.sensitive.name}</code> — {s.sensitive.description}
                   </span>
                 </button>
               ))}
