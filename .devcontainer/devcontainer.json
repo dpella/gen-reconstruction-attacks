@@ -1,5 +1,5 @@
 {
-  "name": "generator-reconstruction-attacks",
+  "name": "gen-reconstruction-attacks",
   "build": {
     "context": "..",
     "dockerfile": "../Dockerfile"

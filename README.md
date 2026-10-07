@@ -1,4 +1,4 @@
-# generator-reconstruction-attacks
+# gen-reconstruction-attacks
 
 Companion code for the paper _"Schema-Driven Generation of Reconstructable
 Datasets from Aggregate Releases"_, to appear at
