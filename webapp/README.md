@@ -133,6 +133,23 @@ python3 -c "from webapp.backend import schemas; t = schemas.TEMPLATES['<id>']; [
 labels, and bins finer than the released precision. A Docker build then
 generates the datasets and verifies them.
 
+## Publishing on dpella.io
+
+The site also runs as a page of DPella's website
+(`/resources/ehds-privacy-risks`, repository `dpella/dpella-web-lovable`),
+without any server: every API response and download is exported as static
+files.
+
+```bash
+# in the built image, which has the generator's dependencies and the cache
+docker run --rm -v /path/to/dpella-web-lovable/public/reconstruction:/out \
+    reconstruction-showcase python webapp/export_static.py /out
+```
+
+The page's components live in `dpella-web-lovable/src/components/reconstruction/`.
+When texts change here, copy the changed `.tsx` files across. When the
+stylesheet changes, regenerate the scoped `reconstruction.css`.
+
 ## Run
 
 ```bash
