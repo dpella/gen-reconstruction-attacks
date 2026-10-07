@@ -148,7 +148,8 @@ docker run --rm -v /path/to/dpella-web-lovable/public/reconstruction:/out \
 
 The page's components live in `dpella-web-lovable/src/components/reconstruction/`.
 When texts change here, copy the changed `.tsx` files across. When the
-stylesheet changes, regenerate the scoped `reconstruction.css`.
+stylesheet changes, regenerate the scoped stylesheet with
+`python3 webapp/scope_css.py webapp/frontend/src/styles.css <dpella-web-lovable>/src/components/reconstruction/reconstruction.css`.
 
 ## Run
 
