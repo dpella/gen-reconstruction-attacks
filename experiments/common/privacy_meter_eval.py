@@ -8,6 +8,12 @@ dataset to predict the sensitive column, then tested on the
 reconstructable core.  High mean relative error is interpreted as good
 privacy protection under this threat model.
 
+The release and the targets are Anonymeter's views (see `_split_views` in
+anonymeter_eval.py): the control rows are held out of the release, and the
+release's secret column is zeroed because the secret is only released
+through the per-query aggregates. The model is also tested on the control
+rows.
+
 Reference: Shokri et al., "Membership Inference Attacks against Machine
 Learning Models", S&P 2017. The ML-attribute-inference variant is
 standard practice in privacy-metric literature and is what the paper
@@ -34,7 +40,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 warnings.filterwarnings("ignore")
 
-from anonymeter_eval import _table_to_encoded_df
+from anonymeter_eval import _split_views, _table_to_encoded_df
 from driver import run_pipeline
 
 
@@ -46,17 +52,21 @@ def run_privacy_meter(cfg: dict, decoy_fraction: float) -> dict:
     df = _table_to_encoded_df(table, queries, n_core)
     secret = "__sensitive__"
     feat_cols = [c for c in df.columns if c != secret]
+    ori, syn, control = _split_views(df, n_core, secret)
 
-    # Train on the full release (attacker's view), test on the
-    # reconstructable core (what the attacker wants to predict).
-    X_train = df[feat_cols].to_numpy()
-    y_train = df[secret].to_numpy()
-    X_test  = df.iloc[:n_core][feat_cols].to_numpy()
-    y_test  = df.iloc[:n_core][secret].to_numpy()
+    # Train on the release (attacker's view), test on the reconstructable
+    # core (what the attacker wants to predict) and on the held-out
+    # control rows.
+    X_train = syn[feat_cols].to_numpy()
+    y_train = syn[secret].to_numpy()
+    X_test  = ori[feat_cols].to_numpy()
+    y_test  = ori[secret].to_numpy()
 
     model = RandomForestRegressor(n_estimators=100, max_depth=10, random_state=cfg["seed"])
     model.fit(X_train, y_train)
     y_pred = model.predict(X_test)
+    c_pred = model.predict(control[feat_cols].to_numpy())
+    c_true = control[secret].to_numpy()
 
     abs_err  = np.abs(y_test - y_pred)
     rel_err  = abs_err / np.clip(np.abs(y_test), 1e-9, None)
@@ -67,6 +77,7 @@ def run_privacy_meter(cfg: dict, decoy_fraction: float) -> dict:
 
     # "Success" under Anonymeter-style ±5% tolerance (paper rebuttal).
     success_rate = float(np.mean(rel_err <= 0.05))
+    control_rate = float(np.mean(np.abs(c_true - c_pred) <= 0.05 * np.abs(c_true)))
 
     return {
         "schema":            cfg.get("name"),
@@ -79,6 +90,7 @@ def run_privacy_meter(cfg: dict, decoy_fraction: float) -> dict:
         "rmse":              rmse,
         "r2":                r2,
         "attack_success_5pct": success_rate,  # fraction of records within ±5%
+        "control_success_5pct": control_rate,
     }
 
 
@@ -104,6 +116,7 @@ def main() -> int:
         f"  RMSE                 : {result['rmse']:.2f}",
         f"  R²                   : {result['r2']:.4f}",
         f"  attack success (±5%) : {result['attack_success_5pct']*100:.2f}% of core",
+        f"  control success      : {result['control_success_5pct']*100:.2f}%",
     ]
     (args.out / "privacy_meter.txt").write_text("\n".join(lines) + "\n")
     print("\n".join(lines))

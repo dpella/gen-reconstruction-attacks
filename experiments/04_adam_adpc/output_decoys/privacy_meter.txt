@@ -1,8 +1,9 @@
 Schema                : adam_adpc  (decoy-augmented, 10% reconstructable)
   core / total         : 128 / 1280
   features             : 301
-  mean relative error  : 118.76%
-  mean absolute error  : 9794.23
-  RMSE                 : 11221.78
-  R²                   : 0.8544
-  attack success (±5%) : 13.28% of core
+  mean relative error  : 100.00%
+  mean absolute error  : 54694.09
+  RMSE                 : 61952.99
+  R²                   : -3.5329
+  attack success (±5%) : 0.00% of core
+  control success      : 0.00%
