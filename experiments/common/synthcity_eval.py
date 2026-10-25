@@ -12,8 +12,11 @@ release:
     et al. (ADS-GAN, JBHI 2019). Measures whether synthetic records are
     close enough to real records that the latter could be re-identified.
 
-Both take (X_gt, X_syn) where X_gt is the reconstructable core and X_syn
-is the full decoy-augmented release, both label-encoded to numeric.
+Both take (X_gt, X_syn), built as Anonymeter's views (see `_split_views`
+in anonymeter_eval.py): X_gt is the reconstructable core minus the
+held-out control rows, and X_syn is the release without the control rows,
+with the secret column zeroed because the secret is only released through
+the per-query aggregates. Both are label-encoded to numeric.
 
 Usage:
     python3 synthcity_eval.py --schema <yaml> --out <dir>
@@ -23,6 +26,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import sys
 import warnings
 from pathlib import Path
@@ -35,7 +39,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 warnings.filterwarnings("ignore")
 
-from anonymeter_eval import _table_to_encoded_df
+from anonymeter_eval import _split_views, _table_to_encoded_df
 from driver import run_pipeline
 
 
@@ -47,13 +51,18 @@ def run_synthcity(cfg: dict, decoy_fraction: float) -> dict:
     table, queries, n_core = run_pipeline(cfg, decoy_fraction=decoy_fraction)
     df = _table_to_encoded_df(table, queries, n_core)
     secret = "__sensitive__"
-    df_core = df.iloc[:n_core].reset_index(drop=True)
-    df_full = df.reset_index(drop=True)
+    ori, syn, _ = _split_views(df, n_core, secret)
 
-    X_gt  = GenericDataLoader(df_core, sensitive_features=[secret])
-    X_syn = GenericDataLoader(df_full, sensitive_features=[secret])
+    X_gt  = GenericDataLoader(ori.reset_index(drop=True), sensitive_features=[secret])
+    X_syn = GenericDataLoader(syn, sensitive_features=[secret])
 
-    leakage_xgb = DataLeakageXGB().evaluate(X_gt, X_syn)
+    # The zeroed secret column gives DataLeakageXGB nothing to learn from:
+    # with a single value it is treated as a class label, the real secrets
+    # of X_gt are then unknown classes, and synthcity raises. Report n/a.
+    if syn[secret].nunique() > 1:
+        leakage_xgb = DataLeakageXGB().evaluate(X_gt, X_syn)
+    else:
+        leakage_xgb = {}
     ident       = IdentifiabilityScore().evaluate(X_gt, X_syn)
 
     return {
@@ -83,6 +92,8 @@ def main() -> int:
         f"Schema           : {result['schema']}  (decoy-augmented, "
         f"{int(result['decoy_fraction']*100)}% reconstructable)",
         f"  core / total    : {result['n_core']} / {result['n_total']}",
+        "  DataLeakageXGB  : n/a (the release's secret column is zeroed)"
+        if math.isnan(result["data_leakage_xgb"]) else
         f"  DataLeakageXGB  : {result['data_leakage_xgb']:.4f}",
         f"  Identifiability : {result['identifiability']:.4f}  "
         f"(one-class: {result['identifiability_oc']:.4f})",
