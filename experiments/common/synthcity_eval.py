@@ -86,7 +86,10 @@ def main() -> int:
     cfg = yaml.safe_load(args.schema.read_text())
     args.out.mkdir(parents=True, exist_ok=True)
     result = run_synthcity(cfg, args.decoy_fraction)
-    (args.out / "synthcity.json").write_text(json.dumps(result, indent=2))
+    # NaN is not valid JSON: write the missing scores as null.
+    json_result = {k: None if isinstance(v, float) and math.isnan(v) else v
+                   for k, v in result.items()}
+    (args.out / "synthcity.json").write_text(json.dumps(json_result, indent=2))
 
     lines = [
         f"Schema           : {result['schema']}  (decoy-augmented, "
