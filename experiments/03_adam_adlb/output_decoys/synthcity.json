@@ -3,7 +3,7 @@
   "n_core": 64,
   "n_total": 640,
   "decoy_fraction": 0.1,
-  "data_leakage_xgb": 0.015384615384615385,
+  "data_leakage_xgb": null,
   "identifiability": 1.0,
-  "identifiability_oc": 0.125
+  "identifiability_oc": 0.038461538461538464
 }

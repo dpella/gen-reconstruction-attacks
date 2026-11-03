@@ -7,13 +7,16 @@ attacker's view is encoded as
     (quasi-identifiers, per-query membership flags, per-query aggregate
      values, sensitive attribute)
 
-The `ori` view is the n-row reconstructable core (the attacker is told
-which rows are "real"), and the `syn` view is the full decoy-augmented
-release. Anonymeter's `InferenceEvaluator` then tries to predict the
-sensitive attribute from the quasi-identifiers + query information.
-Reconstruction is *algebraically* possible via M·s = b, but Anonymeter
-probes correlational / ML-predictive privacy — and therefore reports a
-near-zero risk, missing the vulnerable records entirely.
+The reconstructable core is split into `control` (the first 20%, held
+out of the release) and `ori` (the rest, the attack targets). The `syn`
+view is the decoy-augmented release without the control rows, and with
+the sensitive column zeroed: the release only exposes the secret through
+the per-query aggregates. Anonymeter's `InferenceEvaluator` then tries to
+predict the sensitive attribute from the quasi-identifiers + query
+information. Reconstruction is *algebraically* possible via M·s = b, but
+Anonymeter's attack only copies the secret of the nearest `syn` row — so
+out of the box it reports zero risk, missing the vulnerable records
+entirely.
 
 Usage:
     python3 anonymeter_eval.py --schema <path> [--decoy-fraction 0.1]
@@ -78,26 +81,45 @@ def _table_to_encoded_df(table, queries, n_core):
     return df
 
 
+def _split_views(df, n_core: int, secret: str, control_fraction: float = 0.2):
+    """Split the encoded table into Anonymeter's (ori, syn, control) views.
+
+    The first `n_core` rows of `df` are the reconstructable core and the
+    rest are decoys. The first `control_fraction` of the core is held out
+    as `control` and dropped from `syn`, so the control attack targets
+    records that are not in the release; the remaining core rows are `ori`.
+
+    `syn` is the release: every non-control row, with the secret column
+    zeroed because the secret is only released through the per-query
+    aggregates.
+    """
+    core = df.iloc[:n_core].reset_index(drop=True)
+    n_control = int(n_core * control_fraction)
+    control = core.iloc[:n_control]
+    ori = core.iloc[n_control:]
+    syn = df.iloc[n_control:].reset_index(drop=True)
+    syn[secret] = 0
+    return ori, syn, control
+
+
 def run_anonymeter(cfg: dict, decoy_fraction: float, n_attacks: str | int = "auto") -> dict:
+    """Run Anonymeter's inference attack on one decoy-augmented dataset.
+
+    Returns the risk and the attack / control / baseline success rates.
+    """
     table, queries, n_core = run_pipeline(cfg, decoy_fraction=decoy_fraction)
     df = _table_to_encoded_df(table, queries, n_core)
     secret = "__sensitive__"
     aux_cols = [c for c in df.columns if c != secret]
 
-    # First n_core rows are the reconstructable core; the remainder are
-    # decoys. Anonymeter's `ori` is the private subset, `syn` is the
-    # released (decoy-augmented) table, and `control` mirrors the tiny
-    # kaggle-era setup where the core is too small for a clean split.
-    ori = df.iloc[:n_core][aux_cols + [secret]].reset_index(drop=True)
-    syn = df[aux_cols + [secret]].reset_index(drop=True)
-    control = ori.copy()
+    ori, syn, control = _split_views(df, n_core, secret)
 
     if n_attacks == "auto":
         # Anonymeter samples n_attacks rows from ori without replacement,
-        # so this must not exceed n_core. Cap at 500 to keep runs fast.
-        n_attacks_val = min(500, n_core)
+        # so this must not exceed len(ori). Cap at 500 to keep runs fast.
+        n_attacks_val = min(500, len(ori))
     else:
-        n_attacks_val = min(int(n_attacks), n_core)
+        n_attacks_val = min(int(n_attacks), len(ori))
 
     from anonymeter.evaluators import InferenceEvaluator
 

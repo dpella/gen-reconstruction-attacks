@@ -4,9 +4,10 @@
   "n_total": 160,
   "decoy_fraction": 0.1,
   "n_features": 40,
-  "mean_abs_error": 11548.6689662682,
-  "mean_rel_error": 4.468879833068221,
-  "rmse": 13555.276531225465,
-  "r2": 0.8170062766105051,
-  "attack_success_5pct": 0.125
+  "mean_abs_error": 53939.07692307692,
+  "mean_rel_error": 1.0,
+  "rmse": 60627.23135560582,
+  "r2": -3.7970280763953905,
+  "attack_success_5pct": 0.0,
+  "control_success_5pct": 0.0
 }

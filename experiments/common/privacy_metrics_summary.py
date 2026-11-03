@@ -14,6 +14,11 @@ def _load(path: Path) -> dict | None:
     return json.loads(path.read_text()) if path.exists() else None
 
 
+def _fmt(value, spec: str, scale: float = 1.0, suffix: str = "") -> str:
+    """Format a metric for the markdown table, or `n/a` when it is missing."""
+    return "n/a" if value is None else f"{value * scale:{spec}}{suffix}"
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--exp-dir", type=Path, required=True)
@@ -40,6 +45,7 @@ def main() -> int:
             "pm_mean_rel_error":        p["mean_rel_error"]   if p else None,
             "pm_r2":                    p["r2"]               if p else None,
             "pm_success_5pct":          p["attack_success_5pct"] if p else None,
+            "pm_control_success_5pct":  p.get("control_success_5pct") if p else None,
         })
 
     if not rows:
@@ -63,19 +69,22 @@ def main() -> int:
         "recovers every core record exactly.",
         "",
         "| Schema | n core | n total | Anonymeter risk | attack | control | "
-        "synthcity XGB | synthcity Ident. | Privacy Meter MRE | R² | ±5 % succ. |",
-        "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
+        "synthcity XGB | synthcity Ident. | Privacy Meter MRE | R² | ±5 % succ. | "
+        "±5 % control |",
+        "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for r in rows:
         md.append(
             f"| `{r['schema']}` | {r['n_core']} | {r['n_total']} | "
-            f"{r['anonymeter_risk']:.4f} | "
-            f"{r['anonymeter_attack']:.3f} | {r['anonymeter_control']:.3f} | "
-            f"{r['synthcity_leakage_xgb']:.4f} | "
-            f"{r['synthcity_identifiability']:.4f} | "
-            f"{r['pm_mean_rel_error']*100:.1f}% | "
-            f"{r['pm_r2']:.3f} | "
-            f"{r['pm_success_5pct']*100:.1f}% |"
+            f"{_fmt(r['anonymeter_risk'], '.4f')} | "
+            f"{_fmt(r['anonymeter_attack'], '.3f')} | "
+            f"{_fmt(r['anonymeter_control'], '.3f')} | "
+            f"{_fmt(r['synthcity_leakage_xgb'], '.4f')} | "
+            f"{_fmt(r['synthcity_identifiability'], '.4f')} | "
+            f"{_fmt(r['pm_mean_rel_error'], '.1f', 100, '%')} | "
+            f"{_fmt(r['pm_r2'], '.3f')} | "
+            f"{_fmt(r['pm_success_5pct'], '.1f', 100, '%')} | "
+            f"{_fmt(r['pm_control_success_5pct'], '.1f', 100, '%')} |"
         )
     (args.exp_dir / "privacy_metrics_results.md").write_text("\n".join(md) + "\n")
 
